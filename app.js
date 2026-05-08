@@ -30,10 +30,22 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    
     // Запускаем инициализацию интерфейса
     renderActiveDownloads();
-    checkForAppUpdates(); // <--- ВОТ ЭТА СТРОЧКА!
-    
+    checkForAppUpdates(); 
+
+    // ПРОВЕРЯЕМ, ЕСТЬ ЛИ НОВЫЙ ЧЕЙНДЖЛОГ ПОСЛЕ ПЕРЕЗАГРУЗКИ
+    setTimeout(() => {
+        let changelog = localStorage.getItem('pending_changelog');
+        if (changelog) {
+            let ver = localStorage.getItem('ota_version') || '';
+            showChangelogModal(`Обновление v${ver} успешно установлено!`, changelog);
+            // Удаляем, чтобы окно больше не вылезало при следующих запусках
+            localStorage.removeItem('pending_changelog'); 
+        }
+    }, 1200); // Небольшая задержка 1.2 сек, чтобы сначала растворился загрузочный экран
+
     // Плавное затухание экрана загрузки
     setTimeout(() => {
         let loader = document.getElementById('loader-wrapper');
@@ -158,7 +170,7 @@ function renderActiveFilters() {
     
     // Если выбран R-18, R-18G или Safe - показываем соответствующую метку
     if (searchAgeVal === 'r18') {
-        html += `<div class="chip active" style="padding: 4px 10px; font-size: 12px; border-color: var(--red); color: var(--red); background: transparent;">R-18</div>`;
+        html += `<div class="chip active" style="padding: 4px 10px; font-size: 12px; border-color: var(--red); color: var(--red); background: transparent;">R-18gay</div>`;
     } else if (searchAgeVal === 'r18g') {
         html += `<div class="chip active" style="padding: 4px 10px; font-size: 12px; border-color: var(--purple); color: var(--purple); background: transparent;">R-18G</div>`;
     } else if (searchAgeVal === 'g') {
@@ -2032,45 +2044,88 @@ function spawnFlyingArt(imgSrc) {
 // ==========================================
 // Замените YOUR_USERNAME/YOUR_REPO на ваши данные GitHub!
 const GITHUB_REPO_URL = 'https://raw.githubusercontent.com/YsHalk1/PixivDL/main/';
-const CURRENT_BASE_VERSION = 2; // Увеличивайте, если выпускаете новый полный APK
+const CURRENT_BASE_VERSION = 1; 
 let updateFilesQueue = [];
 let updateFilesDownloaded = 0;
 
 function checkForAppUpdates() {
-    // Добавляем timestamp, чтобы обходить кэш
-    fetch(GITHUB_REPO_URL + 'update.json?t=' + new Date().getTime())
-        .then(response => response.json())
+    let updateUrl = GITHUB_REPO_URL + 'update.json?t=' + new Date().getTime();
+    
+    fetch(updateUrl)
+        .then(response => {
+            if (!response.ok) throw new Error('Файл update.json не найден');
+            return response.json();
+        })
         .then(data => {
             let localVersion = parseInt(localStorage.getItem('ota_version')) || CURRENT_BASE_VERSION;
             
             if (data.version > localVersion) {
-                showToast('Найдено обновление! Установка...');
+                showToast(`Найдено обновление v${data.version}! Качаем...`);
                 updateFilesQueue = data.files;
                 updateFilesDownloaded = 0;
                 
-                // Просим Java скачать все изменившиеся файлы
+                // СОХРАНЯЕМ ВЕРСИЮ И ЧЕЙНДЖЛОГ ВО ВРЕМЕННУЮ ПАМЯТЬ
+                localStorage.setItem('pending_ota_version', data.version);
+                if (data.changelog) {
+                    localStorage.setItem('pending_changelog', data.changelog);
+                }
+                
                 data.files.forEach(fileName => {
                     let fileUrl = GITHUB_REPO_URL + fileName + '?t=' + new Date().getTime();
                     Android.downloadAppUpdateFile(fileName, fileUrl);
                 });
-                
-                // Сохраняем новую версию
-                localStorage.setItem('ota_version', data.version);
             }
-        }).catch(e => console.log('Нет сети или нет обновлений'));
+        })
+        .catch(e => {
+            console.log('OTA Error: ', e);
+        });
 }
 
-// Эту функцию вызывает Java после успешного скачивания файла
 function updateFileDownloaded(fileName) {
     updateFilesDownloaded++;
     if (updateFilesDownloaded >= updateFilesQueue.length) {
-        showToast('Обновление установлено! Применяем...');
+        // КОГДА ВСЁ СКАЧАЛОСЬ - ПРИМЕНЯЕМ ВЕРСИЮ
+        localStorage.setItem('ota_version', localStorage.getItem('pending_ota_version'));
+        showToast('Обновление установлено! Перезапуск...');
         setTimeout(() => {
-            location.reload(); // Перезагружаем интерфейс для применения обновы!
+            location.reload(); 
         }, 1500);
     }
 }
 
 function updateFileFailed(fileName) {
     console.log('Не удалось скачать обновление для: ' + fileName);
+}
+
+// ==========================================
+// ОКНО СПИСКА ИЗМЕНЕНИЙ (CHANGELOG)
+// ==========================================
+function showChangelogModal(title, text) {
+    // Если окна еще нет в HTML, создаем его на лету
+    if (!document.getElementById('changelogModal')) {
+        let html = `
+            <div class="modal-overlay" id="changelogOverlay" onclick="closeChangelogModal()"></div>
+            <div class="custom-modal" id="changelogModal" style="max-height: 80vh; overflow-y: auto;">
+                <h3 id="changelogTitle" style="margin-top:0; margin-bottom:16px; font-size: 18px; color: var(--pixiv-blue);"></h3>
+                <div id="changelogText" style="font-size: 14px; color: var(--subtext); line-height: 1.5; margin-bottom: 24px;"></div>
+                <button class="btn-main" style="margin-top: 0; padding: 12px; font-size: 16px;" onclick="closeChangelogModal()">Понятно, спасибо!</button>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', html);
+    }
+    
+    document.getElementById('changelogTitle').innerText = title;
+    // Заменяем технические переносы строк \n на HTML-теги <br>, чтобы текст был с абзацами
+    document.getElementById('changelogText').innerHTML = text.replace(/\n/g, '<br>');
+    
+    // Показываем с красивой анимацией
+    document.getElementById('changelogOverlay').classList.add('open');
+    document.getElementById('changelogModal').classList.add('open');
+}
+
+function closeChangelogModal() {
+    let overlay = document.getElementById('changelogOverlay');
+    let modal = document.getElementById('changelogModal');
+    if(overlay) overlay.classList.remove('open');
+    if(modal) modal.classList.remove('open');
 }
