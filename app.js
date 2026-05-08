@@ -2031,7 +2031,7 @@ function spawnFlyingArt(imgSrc) {
 // OTA ОБНОВЛЕНИЯ ЧЕРЕЗ GITHUB
 // ==========================================
 // Замените YOUR_USERNAME/YOUR_REPO на ваши данные GitHub!
-const GITHUB_REPO_URL = 'https://github.com/YsHalk1/PixivDL/main/';
+const GITHUB_REPO_URL = 'https://raw.githubusercontent.com/YsHalk1/PixivDL/main/';
 const CURRENT_BASE_VERSION = 2; // Увеличивайте, если выпускаете новый полный APK
 let updateFilesQueue = [];
 let updateFilesDownloaded = 0;
