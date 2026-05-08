@@ -2067,7 +2067,9 @@ function checkForAppUpdates() {
                 // СОХРАНЯЕМ ВЕРСИЮ И ЧЕЙНДЖЛОГ ВО ВРЕМЕННУЮ ПАМЯТЬ
                 localStorage.setItem('pending_ota_version', data.version);
                 if (data.changelog) {
-                    localStorage.setItem('pending_changelog', data.changelog);
+                    // Если это массив (как в новом красивом формате), склеиваем его через перенос строки
+                    let changelogText = Array.isArray(data.changelog) ? data.changelog.join('\n') : data.changelog;
+                    localStorage.setItem('pending_changelog', changelogText);
                 }
                 
                 data.files.forEach(fileName => {
