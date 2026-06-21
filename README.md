@@ -4,8 +4,7 @@
 
 **Android-клиент Pixiv от NotHalk**
 
-Нативная Java-оболочка вокруг WebView-интерфейса (HTML/CSS/JS) с виджетами,
-уведомлениями, умным кэшем и интеграцией с Telegram.
+Telegram - @PixivDL.
 
 ![Platform](https://img.shields.io/badge/platform-Android-3DDC84?logo=android&logoColor=white)
 ![minSdk](https://img.shields.io/badge/minSdk-19-blue)
