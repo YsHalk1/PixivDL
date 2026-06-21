@@ -4,7 +4,7 @@
 
 **Android-клиент Pixiv от NotHalk**
 
-Telegram - @PixivDL.
+Telegram - @PixivDL
 
 ![Platform](https://img.shields.io/badge/platform-Android-3DDC84?logo=android&logoColor=white)
 ![minSdk](https://img.shields.io/badge/minSdk-19-blue)
