@@ -1,0 +1,422 @@
+/* =========================================================
+   ФАЙЛ: nav.css
+   Архитектура навигации: Шапки, Вкладки, Поиск и Сайдбар
+   ========================================================= */
+
+/* =========================================================
+   1. БАЗОВЫЕ ОТСТУПЫ КОНТЕНТА
+   ========================================================= */
+:root {
+    --nav-top-offset: calc(104px + var(--sat, 0px));
+    --nav-bottom-offset: 24px;
+}
+
+body.nav-bottom {
+    --nav-top-offset: calc(64px + var(--sat, 0px)); 
+    --nav-bottom-offset: calc(88px + env(safe-area-inset-bottom, 0px)); /* Подняли контент */
+}
+
+body.nav-floating:not(.nav-bottom) {
+    --nav-top-offset: calc(144px + var(--sat, 0px));
+    --nav-bottom-offset: 24px;
+}
+
+body.nav-floating.nav-bottom {
+    --nav-top-offset: calc(88px + var(--sat, 0px)); 
+    --nav-bottom-offset: calc(100px + env(safe-area-inset-bottom, 0px)); 
+}
+
+body {
+    padding-top: var(--nav-top-offset) !important;
+    padding-bottom: var(--nav-bottom-offset) !important;
+    transition: padding 0.3s ease;
+}
+
+/* Компенсация отступов для страницы поиска (чтобы арты не лезли под панель поиска) */
+body:not(.nav-bottom) #searchCard, body:not(.nav-bottom) #recomCard { padding-top: 90px; }
+/* В V2-сверху панель поиска выше (есть поле ввода) — даём увеличенный зазор над текстом */
+body.nav-floating:not(.nav-bottom) #searchCard { padding-top: 125px; }
+body.nav-bottom:not(.nav-floating) #searchCard { padding-top: 0px !important; padding-bottom: 150px !important; } /* Увеличили под новое меню V1 */
+body.nav-floating.nav-bottom #searchCard { padding-top: 0px !important; padding-bottom: 200px !important; }
+
+/* =========================================================
+   2. КАРКАС НАВИГАЦИИ (Общие правила)
+   ========================================================= */
+.top-bar, .tabs, .search-bar-container, .detail-header {
+    position: fixed !important;
+    z-index: 100;
+    transition: 
+        top 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+        bottom 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+        left 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+        right 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+        width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+        height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+        border-radius 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+        opacity 0.3s ease,
+        transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    background-clip: padding-box !important;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+body.theme-light .search-bar-container { background: var(--surface) !important; }
+
+.top-bar { height: 56px; background: var(--surface); display: flex; align-items: center; justify-content: space-between; padding: 0 16px; }
+.tabs { height: 48px; background: var(--surface); display: flex; z-index: 99; }
+.search-bar-container { background: var(--surface); padding: 12px 16px 8px; display: flex; flex-direction: column; gap: 12px; z-index: 98; }
+.detail-header { height: 56px; background: rgba(30, 30, 30, 0.90); display: flex; align-items: center; padding: 0 16px; backdrop-filter: blur(10px); }
+body.theme-light .detail-header { background: rgba(255, 255, 255, 0.92); }
+
+/* Единый вид кнопки "назад" и заголовка во всех фиксированных шапках */
+.detail-header .back-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 38px; height: 38px; margin-left: -6px; margin-right: 8px;
+    border-radius: 50%; color: var(--text); cursor: pointer; flex-shrink: 0;
+    transition: background 0.2s;
+}
+.detail-header .back-btn:active { background: rgba(128,128,128,0.2); }
+.detail-header-title { font-size: 18px; font-weight: 800; letter-spacing: -0.3px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Author в простом режиме ("Мои работы"/"Нравится"): прячем баннер-профиль и
+   плавающую кнопку, показываем фиксированный бар, контент отступает под него.
+   Отменяем отрицательный margin-top, который задвигал баннер под статус-бар. */
+#page-author.simple-mode { margin-top: 0 !important; }
+#page-author.simple-mode #authorProfileHeader,
+#page-author.simple-mode #authorFloatBack { display: none !important; }
+#page-author.simple-mode #authorSimpleHeader { display: flex !important; }
+
+/* SmartCache — полноэкранный fixed-оверлей: шапка всегда ровный бар у верха экрана,
+   независимо от режима навигации. ID-селектор перебивает режимные правила
+   body.nav-floating .detail-header (floating-скругления/островки, top:16px). */
+#scHeader {
+    position: absolute !important;
+    top: 0 !important; bottom: auto !important; left: 0 !important; right: 0 !important;
+    width: 100% !important; z-index: 60 !important;
+    margin: 0 !important;
+    padding: var(--sat, 0px) 16px 0 !important;
+    height: calc(56px + var(--sat, 0px)) !important;
+    border-radius: 0 !important; border: none !important;
+    border-bottom: 1px solid var(--border) !important;
+    background: var(--bg) !important; box-shadow: none !important;
+}
+
+/* SmartCache — экран настройки в стиле приложения */
+#scSetupScreen { display: flex; flex-direction: column; height: 100%; box-sizing: border-box; }
+.sc-scroll { flex: 1; overflow-y: auto; padding: calc(56px + var(--sat, 0px) + 8px) 16px 16px; }
+.sc-cta-bar { padding: 12px 16px calc(16px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--border); background: var(--bg); }
+.sc-launch { margin-top: 0; padding: 15px; font-size: 16px; border-radius: 14px; }
+
+.sc-hero { text-align: center; padding: 8px 8px 20px; }
+.sc-hero-icon {
+    width: 64px; height: 64px; margin: 0 auto 14px; border-radius: 20px;
+    background: rgba(0,150,250,0.12); color: var(--pixiv-blue);
+    display: flex; align-items: center; justify-content: center;
+}
+.sc-hero-icon .icon { width: 34px; height: 34px; }
+.sc-hero-title { font-size: 22px; font-weight: 800; letter-spacing: -0.4px; color: var(--text); }
+.sc-hero-sub { font-size: 13px; line-height: 1.5; color: var(--subtext); margin-top: 8px; max-width: 320px; margin-left: auto; margin-right: auto; }
+
+.sc-section-head { display: flex; align-items: center; gap: 8px; padding: 16px 2px 10px; }
+.sc-accent { width: 4px; height: 16px; background: var(--pixiv-blue); border-radius: 2px; flex-shrink: 0; }
+.sc-section-title { font-size: 16px; font-weight: 800; letter-spacing: -0.3px; color: var(--text); }
+
+.sc-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 10px; }
+
+.sc-count-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.sc-count {
+    padding: 14px 0; text-align: center; border-radius: 12px; cursor: pointer;
+    background: var(--bg); border: 1px solid var(--border); color: var(--text);
+    font-size: 15px; font-weight: 700; transition: 0.15s;
+}
+.sc-count:active { transform: scale(0.95); }
+.sc-count.active { background: rgba(0,150,250,0.12); border-color: var(--pixiv-blue); color: var(--pixiv-blue); }
+.sc-custom-input {
+    width: 100%; box-sizing: border-box; margin-top: 8px; padding: 12px 14px;
+    background: var(--bg); border: 1px solid var(--pixiv-blue); border-radius: 12px;
+    color: var(--text); font-size: 15px; outline: none;
+}
+
+.sc-quality { display: flex; align-items: center; gap: 12px; padding: 14px 12px; border-radius: 12px; cursor: pointer; transition: background 0.15s; }
+.sc-quality:active { background: var(--bg); }
+.sc-quality + .sc-quality { margin-top: 2px; }
+.sc-quality-text { flex: 1; min-width: 0; }
+.sc-quality-name { font-size: 15px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 8px; }
+.sc-quality-desc { font-size: 12px; color: var(--subtext); margin-top: 2px; }
+.sc-tag { font-size: 10px; font-weight: 800; letter-spacing: 0.3px; text-transform: uppercase; color: var(--pixiv-blue); background: rgba(0,150,250,0.12); padding: 2px 7px; border-radius: 8px; }
+.sc-radio { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border); flex-shrink: 0; position: relative; transition: border-color 0.15s; }
+.sc-quality.active .sc-radio { border-color: var(--pixiv-blue); }
+.sc-quality.active .sc-radio::after { content: ""; position: absolute; inset: 4px; border-radius: 50%; background: var(--pixiv-blue); }
+
+/* SmartCache — активный экран (летающие арты + прогресс) */
+.sc-active-overlay {
+    position: absolute; inset: 0; z-index: 52;
+    background: rgba(0,0,0,0.62); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 0 32px; text-align: center;
+}
+.sc-active-icon {
+    width: 60px; height: 60px; margin-bottom: 18px; border-radius: 18px;
+    background: rgba(0,150,250,0.2); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    animation: pulse 1.8s ease-in-out infinite;
+}
+.sc-active-icon .icon { width: 32px; height: 32px; }
+.sc-active-label { color: rgba(255,255,255,0.8); font-size: 14px; font-weight: 600; margin-bottom: 6px; text-shadow: 0 2px 8px rgba(0,0,0,0.6); }
+.sc-active-count { color: #fff; font-size: 34px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 22px; text-shadow: 0 4px 12px rgba(0,0,0,0.8); }
+.sc-active-track { width: 72%; max-width: 320px; height: 6px; background: rgba(255,255,255,0.22); border-radius: 3px; overflow: hidden; margin-bottom: 18px; }
+.sc-active-fill { width: 0%; height: 100%; background: var(--pixiv-blue); border-radius: 3px; transition: width 0.3s ease; }
+.sc-active-hint { color: rgba(255,255,255,0.65); font-size: 12px; line-height: 1.5; max-width: 280px; margin-bottom: 32px; text-shadow: 0 2px 6px rgba(0,0,0,0.6); }
+.sc-active-stop {
+    padding: 12px 36px; border-radius: 24px; cursor: pointer;
+    background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.3);
+    color: #fff; font-size: 15px; font-weight: 700; transition: 0.15s;
+}
+.sc-active-stop:active { transform: scale(0.95); background: rgba(255,255,255,0.2); }
+
+.top-bar-left, .top-bar-right { display: flex; align-items: center; gap: 4px; }
+.top-bar-logo { color: var(--pixiv-blue); font-size: 24px; font-weight: 900; letter-spacing: -1px; cursor: pointer; }
+.top-bar-logo span { font-size: 11px; color: var(--text); padding: 1px 4px; border-radius: 4px; font-weight: normal;}
+.top-bar-icon { color: var(--subtext); padding: 8px; cursor: pointer; }
+
+/* =========================================================
+   3. КЛАССИКА СВЕРХУ (V1 Top)
+   ========================================================= */
+body:not(.nav-bottom):not(.nav-floating) .top-bar,
+body:not(.nav-bottom):not(.nav-floating) .tabs,
+body:not(.nav-bottom):not(.nav-floating) .search-bar-container,
+body:not(.nav-bottom):not(.nav-floating) .detail-header {
+    left: 0 !important; right: 0 !important; width: 100% !important;
+}
+
+body:not(.nav-bottom):not(.nav-floating) .top-bar { top: 0; padding-top: var(--sat, 0px); height: calc(56px + var(--sat, 0px)); }
+body:not(.nav-bottom):not(.nav-floating) .tabs { top: calc(56px + var(--sat, 0px)); border-bottom: 1px solid var(--border); }
+body:not(.nav-bottom):not(.nav-floating) .tabs .tab { flex: 1; text-align: center; padding: 14px 0; font-size: 14px; font-weight: bold; color: var(--subtext); cursor: pointer; border-bottom: 3px solid transparent;}
+body:not(.nav-bottom):not(.nav-floating) .tabs .tab.active { color: var(--text); border-bottom: 3px solid transparent; }
+body:not(.nav-bottom):not(.nav-floating) .search-bar-container { top: calc(104px + var(--sat, 0px)); border-bottom: 1px solid var(--border); }
+body:not(.nav-bottom):not(.nav-floating) #searchStatus { margin-top: 48px; }
+body:not(.nav-bottom):not(.nav-floating) .detail-header { top: 0; padding-top: var(--sat, 0px); height: calc(56px + var(--sat, 0px)); border-bottom: 1px solid var(--border); }
+
+/* =========================================================
+   4. КЛАССИКА СНИЗУ (V1 Bottom)
+   ========================================================= */
+body.nav-bottom:not(.nav-floating) .top-bar,
+body.nav-bottom:not(.nav-floating) .tabs,
+body.nav-bottom:not(.nav-floating) .search-bar-container,
+body.nav-bottom:not(.nav-floating) .detail-header {
+    left: 0 !important; right: 0 !important; width: 100% !important;
+}
+
+body.nav-bottom:not(.nav-floating) .top-bar { top: 0; bottom: auto; padding-top: var(--sat, 0px); height: calc(56px + var(--sat, 0px)); border-bottom: 1px solid var(--border); }
+
+/* ПОДНЯЛИ ВНИЗУ: Теперь отступ снизу 24px (было 16), высота 72px (было 64) */
+body.nav-bottom:not(.nav-floating) .tabs { 
+    top: auto; bottom: 0; 
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)); 
+    height: calc(72px + env(safe-area-inset-bottom, 0px)); 
+    border-top: 1px solid var(--border); 
+}
+body.nav-bottom:not(.nav-floating) .tabs .tab { flex: 1; text-align: center; padding: 14px 0; font-size: 14px; font-weight: bold; color: var(--subtext); cursor: pointer; border-top: 3px solid transparent;}
+body.nav-bottom:not(.nav-floating) .tabs .tab.active { color: var(--text); border-top: 3px solid transparent; }
+
+/* Поиск тоже подняли вслед за вкладками (начинается с 72px) */
+body.nav-bottom:not(.nav-floating) .search-bar-container { 
+    top: auto; bottom: calc(72px + env(safe-area-inset-bottom, 0px)); 
+    border-top: 1px solid var(--border); border-radius: 16px 16px 0 0; box-shadow: 0 -10px 20px rgba(0,0,0,0.1); 
+}
+body.nav-bottom:not(.nav-floating) .detail-header { top: 0; bottom: auto; padding-top: var(--sat, 0px); height: calc(56px + var(--sat, 0px)); border-bottom: 1px solid var(--border); border-top: none; }
+
+/* =========================================================
+   5. ПЛАВАЮЩИЙ ДИЗАЙН V2: ОБЩИЕ ГЕОМЕТРИЧЕСКИЕ ПРАВИЛА
+   ========================================================= */
+body.nav-floating .top-bar,
+body.nav-floating .tabs,
+body.nav-floating .search-bar-container,
+body.nav-floating .detail-header {
+    left: 16px !important;
+    right: 16px !important;
+    width: auto !important; 
+}
+
+body.nav-floating .tabs { gap: 0px !important; background: transparent !important; padding: 0 16px !important; align-items: center !important; }
+body.nav-floating .tabs .tab { background: transparent !important; border-radius: 0 !important; margin: 0 !important; padding: 12px 0 !important; border: none !important; box-shadow: none !important; flex: 1 !important; display: flex !important; align-items: center !important; justify-content: center !important; white-space: nowrap !important; font-size: 14px; font-weight: bold; color: var(--subtext); }
+body.nav-floating .tabs .tab.active { background: transparent !important; color: var(--text) !important; box-shadow: none !important; }
+
+body.nav-floating:not(.nav-bottom) .tabs .tab { border-bottom: 3px solid transparent !important; }
+body.nav-floating:not(.nav-bottom) .tabs .tab.active { border-bottom: 3px solid transparent !important; }
+body.nav-floating.nav-bottom .tabs .tab { border-top: 3px solid transparent !important; }
+body.nav-floating.nav-bottom .tabs .tab.active { border-top: 3px solid transparent !important; }
+
+/* =========================================================
+   СКОЛЬЗЯЩАЯ ЛИНИЯ АКТИВНОЙ ВКЛАДКИ
+   ========================================================= */
+.tab-slider {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: var(--pixiv-blue);
+    border-radius: 3px 3px 0 0;
+    z-index: 5;
+    pointer-events: none;
+    opacity: 0;
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.2s ease;
+}
+/* В нижних режимах линия располагается у верхнего края вкладок */
+body.nav-bottom:not(.nav-floating) .tab-slider,
+body.nav-floating.nav-bottom .tab-slider {
+    bottom: auto;
+    top: 0;
+    border-radius: 0 0 3px 3px;
+}
+
+/* =========================================================
+   6. V2 СВЕРХУ
+   ========================================================= */
+body.nav-floating:not(.nav-bottom) .top-bar {
+    top: calc(16px + var(--sat, 0px)) !important;
+    border-radius: 20px 20px 0 0 !important; 
+    border: 1px solid rgba(128,128,128,0.15) !important; 
+    border-bottom: 1px solid rgba(128,128,128,0.05) !important; 
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35) !important;
+}
+body.nav-floating:not(.nav-bottom) .tabs {
+    top: calc(71px + var(--sat, 0px)) !important; 
+    height: 56px !important;
+    border-radius: 0 0 20px 20px !important; 
+    background: var(--surface) !important; 
+    border: 1px solid rgba(128,128,128,0.15) !important; 
+    border-top: none !important; 
+    box-shadow: 0 12px 24px rgba(0,0,0,0.35) !important;
+}
+body.nav-floating:not(.nav-bottom) .search-bar-container {
+    top: calc(144px + var(--sat, 0px)) !important;
+    border-radius: 20px !important; border: 1px solid rgba(128,128,128,0.15) !important; 
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35) !important;
+}
+body.nav-floating:not(.nav-bottom) .detail-header {
+    top: calc(16px + var(--sat, 0px)) !important;
+    border-radius: 20px !important; border: 1px solid rgba(128,128,128,0.15) !important; 
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35) !important;
+}
+
+/* =========================================================
+   7. V2 СНИЗУ
+   ========================================================= */
+body.nav-floating.nav-bottom .top-bar {
+    top: calc(16px + var(--sat, 0px)) !important; bottom: auto !important;
+    border-radius: 20px !important; border: 1px solid rgba(128,128,128,0.15) !important; 
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35) !important;
+}
+body.nav-floating.nav-bottom .tabs {
+    top: auto !important; bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important; 
+    height: 56px !important;
+    border-radius: 20px !important; 
+    background: var(--surface) !important; 
+    border: 1px solid rgba(128,128,128,0.15) !important; 
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35) !important;
+}
+body.nav-floating.nav-bottom:has(#page-home.active) .tabs,
+body.nav-floating.nav-bottom:has(#page-search.active) .tabs {
+    border-radius: 0 0 20px 20px !important; 
+    border-top: none !important;
+}
+body.nav-floating.nav-bottom .search-bar-container {
+    top: auto !important; bottom: calc(79px + env(safe-area-inset-bottom, 0px)) !important; 
+    border-radius: 20px 20px 0 0 !important; 
+    border: 1px solid rgba(128,128,128,0.15) !important; 
+    border-bottom: 1px solid rgba(128,128,128,0.05) !important; 
+    box-shadow: 0 -8px 24px rgba(0,0,0,0.35) !important;
+}
+body.nav-floating.nav-bottom .detail-header {
+    top: calc(16px + var(--sat, 0px)) !important; bottom: auto !important;
+    border-radius: 20px !important; border: 1px solid rgba(128,128,128,0.15) !important; 
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35) !important;
+}
+
+/* =========================================================
+   8. САЙДБАР И ОСТРОВКИ
+   ========================================================= */
+.sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: var(--surface); z-index: 10002; transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); box-shadow: 2px 0 16px rgba(0,0,0,0.2); overflow-y: auto; display: flex; flex-direction: column; }
+.sidebar.open { transform: translateX(280px); }
+.sidebar-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 10001; opacity: 0; pointer-events: none; transition: 0.3s ease; backdrop-filter: blur(2px); }
+.sidebar-overlay.open { opacity: 1; pointer-events: auto; touch-action: none; }
+.sidebar-header { position: relative; padding: calc(28px + var(--sat)) 18px 20px 18px; overflow: hidden; display: flex; align-items: center; border-bottom: 1px solid var(--border); }
+.sidebar-header-bg-img { position: absolute; top: -10%; left: -10%; width: 120%; height: 120%; object-fit: cover; filter: blur(24px) brightness(0.7); z-index: 0; display: none; transform: scale(1.1); }
+.sidebar-header-gradient { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: var(--surface); z-index: 1; }
+body.theme-oled .sidebar-header-gradient { background: #000000; }
+body.theme-light .sidebar-header-gradient { background: #ffffff; }
+.sidebar-header-content { position: relative; z-index: 2; display: flex; flex-direction: row; align-items: center; gap: 14px; width: 100%; }
+.sidebar-avatar-container { width: 56px; height: 56px; border-radius: 50%; overflow: hidden; background: var(--bg); border: 1px solid var(--border); flex-shrink: 0; }
+.sidebar-avatar-img { width: 100%; height: 100%; object-fit: cover; display: none; }
+.sidebar-avatar-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: var(--bg); color: var(--subtext); }
+.sidebar-user-info { display: flex; flex-direction: column; overflow: hidden; }
+.sidebar-name { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sidebar-id-chip { display: inline-flex; align-items: center; background: rgba(128, 128, 128, 0.18); padding: 4px 10px; border-radius: 6px; font-size: 13px; color: var(--subtext); width: fit-content; cursor: pointer; transition: 0.2s; }
+.sidebar-id-chip:active { background: rgba(128, 128, 128, 0.35); }
+
+.sidebar-menu { padding: 6px 8px calc(12px + env(safe-area-inset-bottom, 0px)); flex: 1; }
+.sidebar-label { font-size: 12px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: var(--subtext); padding: 16px 12px 6px; }
+.sidebar-item { padding: 13px 12px; font-size: 16px; font-weight: 500; color: var(--text); display: flex; align-items: center; gap: 16px; border-radius: 10px; transition: background 0.15s; cursor: pointer; }
+.sidebar-item:active { background: var(--bg); }
+.sidebar-item-ico { width: 24px; height: 24px; color: var(--pixiv-blue); flex-shrink: 0; }
+.sidebar-item-text { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sidebar-divider { height: 1px; background: var(--border); margin: 8px 16px; }
+
+/* =========================================================
+   FIX: линии и фон
+   ========================================================= */
+html { min-height: 100%; }
+html, body { background-color: var(--bg) !important; background: var(--bg) !important; }
+body::before { content: ""; position: fixed; inset: -4px; background: var(--bg); z-index: -9999; pointer-events: none; }
+
+.top-bar, .tabs, .search-bar-container, .detail-header, .sidebar, .sidebar-overlay, #pull-to-refresh {
+    backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    transform: translateZ(0); -webkit-transform: translateZ(0);
+    will-change: transform, opacity;
+}
+
+/* =========================================================
+   АНИМАЦИИ ПЕРЕКЛЮЧЕНИЯ СТРАНИЦ
+   Новая страница заезжает сбоку, старая плавно затухает.
+   margin-left вместо transform — не ломает position:fixed внутри.
+   ========================================================= */
+
+.page {
+    animation-duration: 0.35s;
+    animation-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
+    animation-fill-mode: both;
+}
+
+/* Новая страница заезжает справа (→ свайп вправо) */
+@keyframes slideInFromRight {
+    0%   { margin-left: 30%; opacity: 0; }
+    100% { margin-left: 0; opacity: 1; }
+}
+/* Новая страница заезжает слева (← свайп влево) */
+@keyframes slideInFromLeft {
+    0%   { margin-left: -30%; opacity: 0; }
+    100% { margin-left: 0; opacity: 1; }
+}
+/* Подстраница — лёгкое всплытие */
+@keyframes popIn {
+    0%   { opacity: 0; margin-top: 14px; }
+    100% { opacity: 1; margin-top: 0; }
+}
+/* Старая страница — затухание */
+@keyframes fadeOut {
+    0%   { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+.slide-right-in { animation-name: slideInFromRight; }
+.slide-left-in  { animation-name: slideInFromLeft; }
+.pop-in         { animation-name: popIn; }
+.fade-out       { animation-name: fadeOut; }
+
+

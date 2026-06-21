@@ -1,0 +1,65 @@
+<div id="page-manager" class="page" style="padding-top: 0;">
+  <div class="detail-header">
+    <div class="back-btn" onclick="goBack()"><svg class="icon"><use xlink:href="#icon-back"></use></svg></div>
+    <div class="font-bold" style="font-size: 16px; color: var(--text);">Менеджер загрузок</div>
+  </div>
+
+  <!-- ХЕРО-КАРТА ХРАНИЛИЩА -->
+  <div class="dlm-hero">
+    <div class="dlm-hero-top">
+      <div class="dlm-hero-icon"><svg class="icon"><use xlink:href="#icon-cloud-dl"></use></svg></div>
+      <div class="dlm-hero-texts">
+        <div class="dlm-hero-label">Занято на устройстве</div>
+        <div class="dlm-hero-value" id="dlmCurrent">…</div>
+      </div>
+      <div class="dlm-refresh" onclick="Android.requestStorageInfo()" aria-label="Обновить">
+        <svg class="icon-sm"><use xlink:href="#icon-refresh"></use></svg>
+      </div>
+    </div>
+
+    <div class="dlm-bar">
+      <div class="dlm-bar-seg used" id="dlmBarUsed" style="width:100%;"></div>
+      <div class="dlm-bar-seg saved" id="dlmBarSaved" style="width:0%;"></div>
+    </div>
+
+    <div class="dlm-hero-legend">
+      <div class="dlm-leg">
+        <span class="dlm-dot used"></span>
+        <span class="dlm-leg-cap">Файлы</span>
+        <span class="dlm-leg-val" id="dlmUsedVal">0 Б</span>
+      </div>
+      <div class="dlm-leg">
+        <span class="dlm-dot saved"></span>
+        <span class="dlm-leg-cap">Сэкономлено</span>
+        <span class="dlm-leg-val" id="dlmSaved">0 Б</span>
+      </div>
+    </div>
+    <div class="dlm-hero-foot" id="dlmOriginal"></div>
+  </div>
+
+  <!-- АКТИВНЫЕ -->
+  <div class="dlm-section-head">
+    <span class="dlm-accent"></span>
+    <span class="dlm-sec-title">Активные загрузки</span>
+    <span class="dlm-count" id="dlmActiveCount" style="display:none;">0</span>
+  </div>
+  <div id="activeDownloadsList" class="dlm-active-wrap">
+    <div class="dlm-empty">
+      <svg class="dlm-empty-icon"><use xlink:href="#icon-dl"></use></svg>
+      <span>Нет активных загрузок</span>
+    </div>
+  </div>
+
+  <!-- СОХРАНЁННОЕ -->
+  <div class="dlm-section-head">
+    <span class="dlm-accent"></span>
+    <span class="dlm-sec-title">Сохранено на устройстве</span>
+    <span class="dlm-count" id="dlmSavedCount" style="display:none;">0</span>
+  </div>
+  <div id="completedDownloadsList" class="dlm-grid">
+    <div class="dlm-empty">
+      <svg class="dlm-empty-icon"><use xlink:href="#icon-folder"></use></svg>
+      <span>Папка загрузок пуста</span>
+    </div>
+  </div>
+</div>

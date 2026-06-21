@@ -1,0 +1,261 @@
+<style>
+  /* --- СТРОГИЙ УТИЛИТАРНЫЙ ПРОФИЛЬ (Строго 5px) --- */
+  #page-down { padding: 12px 16px 32px; }
+  
+  /* Карточка-визитка */
+  .id-card { position: relative; overflow: hidden; background: var(--surface); border: 1px solid var(--border); margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+  
+  /* Баннер профиля */
+  .id-banner-bg { position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; object-fit: cover; filter: blur(5px); opacity: 0.65; z-index: 0; pointer-events: none; }
+  
+  /* Делаем градиент темной темы БАЗОВЫМ (по умолчанию) */
+  .id-banner-grad { 
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; 
+      background: linear-gradient(135deg, rgba(30, 30, 30, 0.4) 0%, var(--surface) 90%);
+  }
+  .theme-oled .id-banner-grad { background: linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, #000000 90%); }
+  .theme-light .id-banner-grad { background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, #ffffff 90%); }
+  .theme-dark .id-banner-grad { background: linear-gradient(135deg, rgba(30, 30, 30, 0.4) 0%, var(--surface) 90%); }
+
+  /* Верхняя часть визитки (Аватар + Инфо) */
+  .id-card-top { position: relative; z-index: 2; display: flex; align-items: center; gap: 16px; padding: 20px; border-bottom: 1px solid rgba(128,128,128,0.1); }
+  .id-avatar { width: 72px; height: 72px; object-fit: cover; background: var(--bg); border: 2px solid var(--border); flex-shrink: 0; }
+  .id-avatar-placeholder { width: 72px; height: 72px; background: var(--bg); border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--subtext); flex-shrink: 0;}
+  .id-info { flex: 1; overflow: hidden; }
+  
+  /* Панель управления (Тулбар под визиткой) */
+  .id-toolbar { position: relative; z-index: 2; display: flex; background: rgba(0,0,0,0.05); }
+  .theme-light .id-toolbar { background: rgba(0,0,0,0.02); }
+  .toolbar-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 0; font-size: 13px; font-weight: bold; color: var(--subtext); cursor: pointer; transition: 0.2s; border-right: 1px solid rgba(128,128,128,0.1); }
+  .toolbar-btn:last-child { border-right: none; }
+  .toolbar-btn:active { background: var(--bg); color: var(--text); }
+  .toolbar-btn.danger:active { color: var(--red); }
+
+  /* Список-панель (Настройки и аккаунты) */
+  .control-panel { border: 1px solid var(--border); background: var(--surface); margin-bottom: 24px; }
+  .control-item { display: flex; align-items: center; justify-content: space-between; padding: 16px; cursor: pointer; transition: background 0.2s; border-bottom: 1px solid var(--border); }
+  .control-item:last-child { border-bottom: none; }
+  .control-item:active { background: var(--bg); }
+  .control-item-left { display: flex; align-items: center; gap: 14px; font-weight: bold; font-size: 14px; color: var(--text); }
+  
+  /* Аккордеон */
+  .control-accordion { max-height: 0; overflow: hidden; transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1); background: var(--bg); }
+  .accordion-inner { padding: 16px; border-bottom: 1px solid var(--border); }
+  .arrow-icon { color: var(--subtext); transition: transform 0.3s ease; transform: rotate(0deg); }
+  .control-item.open .arrow-icon { transform: rotate(180deg); }
+
+  /* Стили для элементов списка сохраненных аккаунтов */
+  .account-switch-item { border-bottom: 1px solid var(--border); }
+  .account-switch-info { width: calc(100% - 40px); }
+  .account-switch-avatar { width: 36px; height: 36px; object-fit: cover; border: 1px solid var(--border); flex-shrink: 0; }
+  .account-switch-text { overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
+  .account-switch-name { white-space: nowrap; text-overflow: ellipsis; overflow: hidden; font-size: 14px; color: var(--text); }
+  .account-switch-id { font-size: 11px; font-family: monospace; margin-top: 2px; }
+
+  /* Квадратный переключатель в стиле 5px */
+  .square-switch { position: relative; width: 44px; height: 24px; background: rgba(128,128,128,0.25); border: 1px solid var(--border); transition: 0.3s; }
+  .square-switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; background: var(--subtext); transition: 0.3s; }
+  .square-switch.active { background: var(--pixiv-blue); border-color: transparent; }
+  .square-switch.active::after { left: 23px; background: #fff; }
+
+  /* Жесткие 5px для всех элементов */
+  #page-down .radius-5, #page-down .id-card, #page-down .id-avatar, #page-down .id-avatar-placeholder,
+  #page-down .control-panel, #page-down .btn-main, #page-down .btn-secondary, #page-down .btn-outline,
+  #page-down .input-box, #page-down .theme-segmented, #page-down .theme-segment, #page-down .sidebar-id-chip,
+  #page-down .account-switch-avatar, #page-down .square-switch, #page-down .square-switch::after { border-radius: 5px !important; }
+
+  /* --- Экспериментальные: Telegram --- */
+  .exp-badge { display: inline-block; font-size: 10px; font-weight: bold; letter-spacing: .5px; text-transform: uppercase; color: var(--pixiv-blue); border: 1px solid var(--pixiv-blue); border-radius: 4px; padding: 1px 6px; margin-left: 8px; opacity: .85; }
+  .tg-step { display: none; }
+  .tg-step.active { display: block; }
+  .tg-input { width: 100%; box-sizing: border-box; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 11px 14px; border-radius: 5px; font-size: 14px; outline: none; margin-top: 8px; }
+  .tg-input:focus { border-color: var(--pixiv-blue); }
+  .tg-err { color: var(--red); font-size: 12px; margin-top: 8px; min-height: 14px; line-height: 1.3; }
+  .tg-status-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background: rgba(128,128,128,0.18); border: 1px solid var(--border); color: var(--subtext); }
+  .tg-status-chip.ok { color: var(--green); border-color: var(--green); background: rgba(52,199,89,0.12); }
+  .tg-chan-list { margin-top: 4px; }
+  .tg-chan-item { display: flex; align-items: center; gap: 12px; padding: 10px 4px; border-bottom: 1px solid var(--border); }
+  .tg-chan-item:last-child { border-bottom: none; }
+  .tg-chan-noperm { opacity: .5; }
+  .tg-chan-noperm .tg-chan-sub { color: var(--red); }
+  .tg-chan-avatar { width: 38px; height: 38px; border-radius: 5px; object-fit: cover; flex-shrink: 0; background: rgba(128,128,128,0.2); display: flex; align-items: center; justify-content: center; }
+  .tg-chan-avatar svg { width: 18px; height: 18px; color: var(--subtext); }
+  .tg-chan-meta { overflow: hidden; flex: 1; }
+  .tg-chan-title { font-size: 14px; font-weight: bold; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tg-chan-sub { font-size: 11px; color: var(--subtext); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+  .tg-empty { font-size: 12px; color: var(--subtext); padding: 12px 4px; text-align: center; }
+</style>
+
+<div id="page-down" class="page">
+  <div class="section-title" style="margin-top: 8px;">Профиль</div>
+
+  <div id="accountCard">
+    <div id="loggedOutView" class="id-card radius-5" style="text-align: center; padding: 40px 20px;">
+      <svg class="icon" style="width: 48px; height: 48px; color: var(--subtext); margin-bottom: 16px;"><use href="#icon-user"></use></svg>
+      <h2 style="margin-bottom: 8px; font-size: 18px;">Вход не выполнен</h2>
+      <p class="text-sub" style="margin-bottom: 24px; font-size: 13px;">Функции поиска и загрузки ограничены. Авторизуйтесь через аккаунт Pixiv.</p>
+      <button class="btn-main radius-5" style="max-width: 220px; margin: 0 auto;" onclick="Android.login()">Войти через Pixiv</button>
+      <button class="btn-main radius-5" style="max-width: 220px; margin: 12px auto 0; background: transparent; color: var(--text); border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; gap: 8px;" onclick="doRestore()">
+        <svg class="icon-sm"><use href="#icon-save"></use></svg> Восстановить из копии
+      </button>
+    </div>
+
+    <div id="loggedInView" class="id-card radius-5" style="display: none;">
+      <img id="mainBannerImg" class="id-banner-bg" src="">
+      <div class="id-banner-grad"></div>
+
+      <div class="id-card-top">
+        <img id="mainAvatarImg" class="id-avatar radius-5" src="">
+        <div id="mainAvatarPlaceholder" class="id-avatar-placeholder radius-5" style="display:none;"><svg style="width: 32px; height: 32px;"><use href="#icon-user"></use></svg></div>
+
+        <div class="id-info">
+          <div id="accName" class="font-bold" style="font-size: 18px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">---</div>
+          <div class="sidebar-id-chip radius-5" style="margin-top: 6px; display: inline-flex; align-items: center; background: rgba(128,128,128,0.2); border: 1px solid rgba(255,255,255,0.1); padding: 4px 10px; cursor: pointer;" onclick="copyUserId()">
+            <span id="accId" style="font-size: 12px; font-family: monospace;">ID: ---</span>
+            <svg class="icon-xs" style="margin-left: 6px; opacity: 0.7;"><use href="#icon-copy"></use></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="id-toolbar">
+        <div class="toolbar-btn" onclick="Android.updateToken()"><svg class="icon-sm"><use xlink:href="#icon-refresh"></use></svg>Обновить</div>
+        <div class="toolbar-btn danger" onclick="Android.logout()"><svg class="icon-sm"><use xlink:href="#icon-logout"></use></svg>Выйти</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title" id="savedAccountsTitle" style="display:none; margin: 0 0 8px 4px;">Сохраненные сессии</div>
+  <div id="savedAccountsCard" style="display:none;">
+    <div class="control-panel radius-5">
+      <div id="savedAccountsList"></div>
+      <div class="control-item" style="justify-content: center; color: var(--pixiv-blue);" onclick="Android.login()">
+        <div class="font-bold" style="display: flex; align-items: center; gap: 8px;">
+          <svg class="icon-sm"><use href="#icon-user"></use></svg> Добавить аккаунт
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title" style="margin: 0 0 8px 4px;">Дополнительно:</div>
+  <div class="control-panel radius-5">
+
+    <div class="control-item" id="itemTheme" onclick="window.toggleAccSettings('accTheme', 'itemTheme')">
+      <div class="control-item-left"><svg class="icon-sm" style="color: var(--text);"><use href="#icon-eye"></use></svg> <span>Внешний вид</span></div>
+      <svg class="icon-sm arrow-icon" style="transform: rotate(-90deg);"><use href="#icon-back"></use></svg>
+    </div>
+    <div id="accTheme" class="control-accordion">
+      <div class="accordion-inner">
+        <div class="text-sub" style="margin-bottom: 8px; font-size: 12px;">Цветовая схема</div>
+        <div class="theme-segmented radius-5" style="margin-top: 0; border: 1px solid var(--border); background: var(--surface);">
+          <div class="theme-segment radius-5" id="btnThemeLight" onclick="setTheme('light')">Светлая</div>
+          <div class="theme-segment radius-5" id="btnThemeDark" onclick="setTheme('dark')">Темная</div>
+          <div class="theme-segment radius-5" id="btnThemeOled" onclick="setTheme('oled')">AMOLED</div>
+        </div>
+      </div>
+      <div class="control-item" onclick="window.toggleBottomNavigation()">
+        <div class="control-item-left"><svg class="icon-sm" style="color: var(--text);"><use href="#icon-menu"></use></svg> <span>Нижнее меню</span></div>
+        <div class="square-switch radius-5" id="navPosToggle"></div>
+      </div>
+      <div class="control-item" id="navV2Setting" onclick="window.toggleV2Navigation()" style="display: none; border-top: 1px solid var(--border);">
+        <div class="control-item-left"><svg class="icon-sm" style="color: var(--text);"><use href="#icon-sync"></use></svg> <span>Плавающее меню</span></div>
+        <div class="square-switch radius-5" id="navV2Toggle"></div>
+      </div>
+    </div>
+
+    <div class="control-item disabled-section" id="r18SettingsCard" onclick="Android.openPixivSettings()">
+      <div class="control-item-left"><svg class="icon-sm" style="color: var(--red);"><use href="#icon-settings"></use></svg> <span>Фильтры R-18</span></div>
+      <svg class="icon-sm arrow-icon" style="transform: rotate(-180deg); opacity: 0.5;"><use href="#icon-back"></use></svg>
+    </div>
+
+    <div class="control-item" id="itemBackup" onclick="window.toggleAccSettings('accBackup', 'itemBackup')">
+      <div class="control-item-left"><svg class="icon-sm" style="color: var(--green);"><use href="#icon-save"></use></svg> <span>Сохранение</span></div>
+      <svg class="icon-sm arrow-icon" style="transform: rotate(-90deg);"><use href="#icon-back"></use></svg>
+    </div>
+    <div id="accBackup" class="control-accordion">
+      <div class="accordion-inner">
+        <div class="text-sub" style="margin-bottom: 12px; font-size: 12px;">Резервная копия сессий и данных. Вы сможете удалить приложение и вернутся в любое удобное время не проходя через логин PIXIV.<br>Сохранение займёт не больше 1мб.</div>
+        <button class="btn-main radius-5" style="margin-top: 0; width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 8px;" onclick="doBackup()">
+          <svg class="icon-sm"><use href="#icon-save"></use></svg> Сохранить данные
+        </button>
+        <div id="backupStatus" class="text-sub mt-12" style="font-size: 12px;">Готово к сохранению</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ====== ЭКСПЕРИМЕНТАЛЬНЫЕ ====== -->
+  <div class="section-title" style="margin: 0 0 8px 4px;">Экспериментальные</div>
+  <div class="control-panel radius-5">
+
+    <div class="control-item" id="itemTelegram" onclick="window.toggleAccSettings('accTelegram', 'itemTelegram')">
+      <div class="control-item-left"><svg class="icon-sm" style="color: #229ED9;"><use href="#icon-telegram"></use></svg> <span>Telegram Posting</span><span class="exp-badge">beta</span></div>
+      <svg class="icon-sm arrow-icon" style="transform: rotate(-90deg);"><use href="#icon-back"></use></svg>
+    </div>
+    <div id="accTelegram" class="control-accordion">
+      <div class="accordion-inner">
+        <div class="text-sub" style="margin-bottom: 12px; font-size: 12px;">Привязка Telegram-бота по токену от @BotFather для публикации работ в Telegram каналы/группы.</div>
+
+        <!-- Шаг: статус привязки (когда не привязан / привязан) -->
+        <div id="tgStepStatus" class="tg-step active">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+            <span id="tgStatusChip" class="tg-status-chip">Не привязан</span>
+            <button id="tgUnlinkBtn" class="btn-secondary radius-5" style="display: none; width: auto; margin-top: 0; padding: 8px 14px; font-size: 13px; color: var(--red); border-color: var(--red);" onclick="tgLogout()">Отвязать</button>
+          </div>
+          <button id="tgLinkBtn" class="btn-main radius-5" style="width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 8px;" onclick="tgStart()">
+            <svg class="icon-sm"><use href="#icon-telegram"></use></svg> <span id="tgLinkBtnText">Привязать бота</span>
+          </button>
+          <button id="tgRefreshBtn" class="btn-secondary radius-5" style="width: 100%; display: none;" onclick="tgRefresh()">Обновить список</button>
+        </div>
+
+        <!-- Шаг: ввод токена бота -->
+        <div id="tgStepToken" class="tg-step">
+          <div class="text-sub" style="font-size: 12px;">Создайте бота у <b>@BotFather</b>, добавьте его в канал/группу с правом «Публикация сообщений», затем вставьте токен:</div>
+          <input type="text" id="tgTokenInput" class="tg-input" placeholder="123456789:AA..." autocomplete="off" autocapitalize="off" spellcheck="false">
+          <div id="tgTokenErr" class="tg-err"></div>
+          <button class="btn-main radius-5" style="width: 100%;" onclick="tgSubmitToken()">Привязать</button>
+          <button class="btn-secondary radius-5" style="width: 100%;" onclick="tgCancel()">Отмена</button>
+        </div>
+
+        <!-- Шаг: загрузка -->
+        <div id="tgStepLoading" class="tg-step">
+          <div class="text-sub" style="font-size: 12px; text-align: center; padding: 12px 0;">Подключение к Telegram…</div>
+        </div>
+
+        <!-- Список каналов -->
+        <div id="tgChannelsBlock" style="display: none; margin-top: 16px;">
+          <div class="section-title" style="margin: 0 0 4px 0; font-size: 13px;">Каналы и группы бота</div>
+          <div id="tgChannelsList" class="tg-chan-list"></div>
+
+          <!-- Надёжное добавление вручную (не зависит от getUpdates) -->
+          <div class="text-sub" style="font-size: 11px; margin-top: 12px; opacity: .9;">Добавьте канал по @username или ID (бот должен быть в нём участником/админом):</div>
+          <div style="display: flex; gap: 8px; margin-top: 8px;">
+            <input type="text" id="tgAddInput" class="tg-input" style="margin-top: 0;" placeholder="@my_channel или ID" autocomplete="off" autocapitalize="off" spellcheck="false">
+            <button class="btn-main radius-5" style="width: auto; margin-top: 0; padding: 0 16px;" onclick="tgAddChat()">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="control-item" id="itemOpenLinks" onclick="openLinkDefaultsSettings()" style="cursor: pointer;">
+      <div class="control-item-left"><svg class="icon-sm" style="color: var(--pixiv-blue);"><use href="#icon-explore"></use></svg> <span>Открывать ссылки Pixiv</span><span class="exp-badge">beta</span></div>
+      <svg class="icon-sm arrow-icon" style="transform: rotate(-90deg);"><use href="#icon-back"></use></svg>
+    </div>
+
+  </div>
+
+  <div class="section-title" style="margin: 0 0 8px 4px;">И ещё:</div>
+  <div class="control-item" id="r18SettingsCard" onclick="Android.openExternalLink('https://t.me/PixivDL')" style="cursor: pointer;">
+    <div class="control-item-left">
+      <svg class="icon-sm" style="color: var(--pixiv-blue);"><use href="#icon-telegram"></use></svg> 
+      <span>PixivDL</span>
+    </div>
+    <svg class="icon-sm arrow-icon" style="transform: rotate(-180deg); opacity: 0.5;"><use href="#icon-back"></use></svg>
+  </div>
+  <div class="control-item" id="r18SettingsCard" onclick="Android.openExternalLink('https://t.me/catalystdevplugins')" style="cursor: pointer;">
+    <div class="control-item-left">
+      <svg class="icon-sm" style="color: var(--pixiv-blue);"><use href="#icon-telegram"></use></svg> 
+      <span>PixivDL Catod-Mod</span>
+    </div>
+    <svg class="icon-sm arrow-icon" style="transform: rotate(-180deg); opacity: 0.5;"><use href="#icon-back"></use></svg>
+  </div>
+</div>

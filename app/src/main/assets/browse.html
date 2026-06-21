@@ -1,0 +1,227 @@
+<div id="page-browse" class="page">
+
+  <div style="padding: 16px 16px 8px;">
+    <div style="font-size: 22px; font-weight: 900; color: var(--text); letter-spacing: -0.5px;">Просмотр<span class="badge-beta">BETA</span></div>
+    <div class="text-sub" style="margin-top: 4px;">Библиотека хентая</div>
+  </div>
+
+  <div style="padding: 0 12px 8px;">
+    <div style="display:flex; gap:8px; align-items:center;">
+      <div style="flex:1; position:relative;">
+        <input id="browseSearchInput" type="text" placeholder="Поиск по названию или тегу..."
+          style="width:100%; padding:10px 14px 10px 36px; background:var(--surface); border:1px solid var(--border); border-radius:10px; color:var(--text); font-size:14px; outline:none; box-sizing:border-box;"
+          onkeydown="if(event.key==='Enter'){startBrowseSearch(); event.target.blur();}">
+        <svg style="position:absolute; left:10px; top:50%; transform:translateY(-50%); width:16px; height:16px; color:var(--subtext); pointer-events:none;" viewBox="0 0 24 24"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      </div>
+      <div id="browseClearBtn" onclick="clearBrowseSearch()" style="display:none; padding:8px 12px; background:var(--surface); border:1px solid var(--border); border-radius:10px; color:var(--subtext); font-size:13px; cursor:pointer; white-space:nowrap;">Сброс</div>
+    </div>
+  </div>
+
+  <!-- Continue Watching -->
+  <div id="browseWatchSection" style="display:none; padding:0 12px 8px;">
+    <div style="font-size:15px; font-weight:bold; color:var(--text); margin-bottom:8px;">Продолжить просмотр</div>
+    <div id="browseWatchGrid" style="display:flex; gap:10px; overflow-x:auto; padding-bottom:8px; -webkit-overflow-scrolling:touch;"></div>
+  </div>
+
+  <!-- Favorites -->
+  <div id="browseFavSection" style="display:none; padding:0 12px 8px;">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+      <div style="font-size:15px; font-weight:bold; color:var(--text);">Избранное</div>
+      <div id="browseFavCount" style="font-size:12px; color:var(--subtext);"></div>
+    </div>
+    <div id="browseFavGrid" style="display:flex; gap:10px; overflow-x:auto; padding-bottom:8px; -webkit-overflow-scrolling:touch;"></div>
+  </div>
+
+  <div id="browseError" style="display:none; margin: 16px; padding: 16px; background: var(--surface); border-radius: 12px; border: 1px solid var(--border);">
+    <div style="font-size: 14px; font-weight: bold; color: var(--text); margin-bottom: 6px;">Не удалось загрузить</div>
+    <div id="browseErrorMsg" class="text-sub" style="font-size: 13px;"></div>
+    <button class="btn-secondary" style="margin-top: 12px;" onclick="loadBrowse(true)">Повторить</button>
+  </div>
+
+  <div id="browseLoading" style="display:none; padding: 40px 16px; text-align: center;">
+    <div class="loader-spinner" style="margin: 0 auto;"></div>
+    <div class="text-sub" style="margin-top: 12px; font-size: 13px;">Загрузка библиотеки...</div>
+  </div>
+
+  <div id="browseGrid" style="padding: 0 8px 8px;"></div>
+
+  <div style="padding: 8px 16px 24px;">
+    <button id="loadMoreBrowseBtn" class="btn-secondary" style="display:none;" onclick="loadMoreBrowse()">Загрузить ещё</button>
+  </div>
+
+</div>
+
+<!-- Browse Detail Page -->
+<div id="page-browse-detail" class="page" style="display:none; padding-top:0; position:fixed; top:0; left:0; right:0; bottom:0; z-index:100; background:var(--bg); overflow-y:auto; overflow-x:hidden;">
+
+  <!-- Header -->
+  <div class="detail-header" style="position:sticky; top:0; z-index:50;">
+    <div class="back-btn" onclick="goBackFromBrowseDetail()" style="cursor:pointer; padding:8px; margin-left:-8px;">
+      <svg class="icon"><use href="#icon-back" xlink:href="#icon-back"></use></svg>
+    </div>
+    <div id="bdTitle" style="flex:1; font-size:15px; font-weight:bold; color:var(--text); margin-left:8px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;">Загрузка...</div>
+    <div id="bdFavBtn" onclick="toggleBrowseFavorite()" style="cursor:pointer; padding:8px; margin-right:-8px;">
+      <svg id="bdFavIcon" class="icon" style="color:var(--subtext);" viewBox="0 0 24 24"><path fill="currentColor" d="M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z"/></svg>
+    </div>
+  </div>
+
+  <!-- Cover -->
+  <div id="bdCoverWrap" style="position:relative; width:100%; overflow:hidden; background:#0a0a0a; margin-top:90px;">
+    <img id="bdCover" src="" style="width:100%; max-height:260px; object-fit:cover; display:block;" onerror="this.parentElement.style.display='none'">
+    <div style="position:absolute; bottom:0; left:0; right:0; height:100px; background:linear-gradient(transparent, var(--bg));"></div>
+  </div>
+
+  <!-- Info -->
+  <div style="padding:16px 16px 4px;">
+    <div id="bdTitleFull" style="font-size:21px; font-weight:900; color:var(--text); line-height:1.3; letter-spacing:-0.3px;"></div>
+    <div id="bdMeta" style="display:flex; gap:8px; align-items:center; margin-top:10px; flex-wrap:wrap;"></div>
+    <div id="bdGenres" style="display:flex; gap:6px; flex-wrap:wrap; margin-top:10px;"></div>
+    <div id="bdDescWrap" style="margin-top:12px; display:none;">
+      <div id="bdDesc" style="font-size:13px; color:var(--subtext); line-height:1.65; max-height:60px; overflow:hidden; transition:max-height 0.3s;"></div>
+      <div id="bdDescToggle" onclick="toggleBdDesc()" style="font-size:12px; color:var(--pixiv-blue); margin-top:6px; cursor:pointer; font-weight:600;">Показать полностью</div>
+    </div>
+  </div>
+
+  <!-- Player -->
+  <div style="padding:12px 12px 0;">
+    <div id="bdPlayerWrap" style="background:#0d0d0d; border-radius:14px; overflow:hidden; position:relative; -webkit-tap-highlight-color:transparent; border:1px solid var(--border);">
+
+      <!-- Placeholder shown before episode is selected -->
+      <div id="bdPlayerPlaceholder" style="aspect-ratio:16/9; background:#000; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;">
+        <div style="width:52px; height:52px; border-radius:50%; background:rgba(255,255,255,0.07); display:flex; align-items:center; justify-content:center;">
+          <svg style="width:26px; height:26px; color:rgba(255,255,255,0.3); margin-left:3px;" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+        </div>
+        <div style="font-size:13px; color:rgba(255,255,255,0.3); font-weight:500;">Выберите серию</div>
+      </div>
+
+      <video id="bdVideo" playsinline webkit-playsinline
+        poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="
+        style="width:100%; aspect-ratio:16/9; background:#000; outline:none; object-fit:contain; display:none;">
+      </video>
+
+      <!-- Custom overlay controls -->
+      <div id="bdPlayerOverlay" style="position:absolute; top:0; left:0; right:0; bottom:0; z-index:2; display:flex; flex-direction:column; justify-content:flex-end; transition:opacity 0.25s; opacity:0; pointer-events:auto;">
+
+        <div style="position:absolute; top:0; left:0; width:40%; bottom:80px; z-index:1;" ontouchend="bdHandleDoubleTap(event, 'left')" onclick="bdHandleClick(event)"></div>
+        <div style="position:absolute; top:0; right:0; width:40%; bottom:80px; z-index:1;" ontouchend="bdHandleDoubleTap(event, 'right')" onclick="bdHandleClick(event)"></div>
+
+        <div id="bdSeekLeft" style="position:absolute; top:50%; left:20%; transform:translate(-50%,-50%); opacity:0; pointer-events:none; z-index:3;">
+          <div style="width:70px; height:70px; border-radius:50%; background:rgba(0,0,0,0.75); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;">
+            <svg style="width:32px; height:32px; color:#fff;" viewBox="0 0 24 24"><path fill="currentColor" d="M11.99 5V1l-5 5 5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6h-2c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
+            <span style="font-size:13px; font-weight:bold; color:#fff;">10 сек</span>
+          </div>
+        </div>
+        <div id="bdSeekRight" style="position:absolute; top:50%; right:20%; transform:translate(50%,-50%); opacity:0; pointer-events:none; z-index:3;">
+          <div style="width:70px; height:70px; border-radius:50%; background:rgba(0,0,0,0.75); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;">
+            <svg style="width:32px; height:32px; color:#fff;" viewBox="0 0 24 24"><path fill="currentColor" d="M12 5V1l5 5-5 5V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8z"/></svg>
+            <span style="font-size:13px; font-weight:bold; color:#fff;">10 сек</span>
+          </div>
+        </div>
+
+        <div onclick="event.stopPropagation(); bdTogglePlay();" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:56px; height:56px; border-radius:50%; background:rgba(0,0,0,0.55); display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:2;">
+          <svg id="bdPlayIcon" style="width:28px; height:28px; color:#fff; margin-left:3px;" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+        </div>
+
+        <div onclick="event.stopPropagation();" style="padding:0 12px 10px; background:linear-gradient(transparent, rgba(0,0,0,0.8));">
+          <div id="bdProgressWrap" style="height:20px; display:flex; align-items:center; cursor:pointer; position:relative;" onclick="event.stopPropagation();" ontouchstart="bdSeekStart(event)" ontouchmove="bdSeekMove(event)" ontouchend="bdSeekEnd(event)" onmousedown="bdSeekStart(event)">
+            <div style="width:100%; height:3px; background:rgba(255,255,255,0.2); border-radius:2px; position:relative; overflow:visible;">
+              <div id="bdBuffered" style="position:absolute; top:0; left:0; height:100%; background:rgba(255,255,255,0.3); border-radius:2px;"></div>
+              <div id="bdProgress" style="position:absolute; top:0; left:0; height:100%; background:var(--pixiv-blue); border-radius:2px; width:0%;"></div>
+              <div id="bdScrubber" style="position:absolute; top:50%; width:12px; height:12px; border-radius:50%; background:#fff; transform:translate(-50%,-50%); box-shadow:0 0 4px rgba(0,0,0,0.5); left:0%;"></div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-top:2px;">
+            <span id="bdTimeText" style="font-size:11px; color:rgba(255,255,255,0.8); font-variant-numeric:tabular-nums;">0:00 / 0:00</span>
+            <div style="display:flex; align-items:center; gap:4px;">
+              <div id="bdQualityChips" style="display:flex; gap:4px;"></div>
+              <div onclick="event.stopPropagation(); openBdFullscreen();" style="padding:6px; cursor:pointer;">
+                <svg style="width:20px; height:20px; color:#fff;" viewBox="0 0 24 24"><path fill="currentColor" d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="bdPlayerLoading" style="display:none; position:absolute; top:0; left:0; right:0; bottom:0; z-index:3; background:#000; align-items:center; justify-content:center;">
+        <div class="loader-spinner"></div>
+      </div>
+    </div>
+  </div>
+
+  
+
+  <!-- Episodes -->
+  <div style="padding:4px 16px 32px;">
+    <div style="font-size:13px; font-weight:700; color:var(--subtext); letter-spacing:0.5px; text-transform:uppercase; margin-bottom:10px; margin-top:8px;">Серии</div>
+    <div id="bdEpisodesList"></div>
+  </div>
+
+  <!-- Loading -->
+  <div id="bdLoading" style="display:none; padding:60px 16px; text-align:center;">
+    <div class="loader-spinner" style="margin:0 auto;"></div>
+    <div class="text-sub" style="margin-top:12px;">Загрузка тайтла...</div>
+  </div>
+
+  <!-- Error -->
+  <div id="bdError" style="display:none; margin:16px; padding:16px; background:var(--surface); border-radius:12px; border:1px solid var(--border);">
+    <div style="font-size:14px; font-weight:bold; color:var(--text); margin-bottom:6px;">Не удалось загрузить</div>
+    <div id="bdErrorMsg" class="text-sub"></div>
+    <button class="btn-secondary" style="margin-top:12px;" onclick="retryBrowseDetail()">Повторить</button>
+  </div>
+
+</div>
+
+<!-- Fullscreen player (landscape) -->
+<div id="bdFullscreenOverlay" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; z-index:9999; background:#000; -webkit-tap-highlight-color:transparent;">
+  <video id="bdFullscreenVideo" playsinline webkit-playsinline
+    poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="
+    style="width:100%; height:100%; object-fit:contain; background:#000; outline:none; display:none;">
+  </video>
+
+  <!-- Fullscreen overlay controls -->
+  <div id="bdFsOverlay" style="position:absolute; top:0; left:0; right:0; bottom:0; z-index:2; display:flex; flex-direction:column; justify-content:flex-end; transition:opacity 0.25s; opacity:0;">
+
+    <!-- Double tap zones (excluding bottom controls area) -->
+    <div style="position:absolute; top:0; left:0; width:40%; bottom:100px; z-index:1;" ontouchend="bdFsHandleDoubleTap(event, 'left')" onclick="bdFsHandleClick(event)"></div>
+    <div style="position:absolute; top:0; right:0; width:40%; bottom:100px; z-index:1;" ontouchend="bdFsHandleDoubleTap(event, 'right')" onclick="bdFsHandleClick(event)"></div>
+
+    <!-- Seek indicators -->
+    <div id="bdFsSeekLeft" style="position:absolute; top:50%; left:20%; transform:translate(-50%,-50%); opacity:0; pointer-events:none; z-index:3;">
+      <div style="width:80px; height:80px; border-radius:50%; background:rgba(0,0,0,0.75); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;">
+        <svg style="width:36px; height:36px; color:#fff;" viewBox="0 0 24 24"><path fill="currentColor" d="M11.99 5V1l-5 5 5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6h-2c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
+        <span style="font-size:14px; font-weight:bold; color:#fff;">10 сек</span>
+      </div>
+    </div>
+    <div id="bdFsSeekRight" style="position:absolute; top:50%; right:20%; transform:translate(50%,-50%); opacity:0; pointer-events:none; z-index:3;">
+      <div style="width:80px; height:80px; border-radius:50%; background:rgba(0,0,0,0.75); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;">
+        <svg style="width:36px; height:36px; color:#fff;" viewBox="0 0 24 24"><path fill="currentColor" d="M12 5V1l5 5-5 5V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8z"/></svg>
+        <span style="font-size:14px; font-weight:bold; color:#fff;">10 сек</span>
+      </div>
+    </div>
+
+    <!-- Center play/pause -->
+    <div onclick="event.stopPropagation(); bdFsTogglePlay();" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:64px; height:64px; border-radius:50%; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:2;">
+      <svg id="bdFsPlayIcon" style="width:32px; height:32px; color:#fff; margin-left:3px;" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+    </div>
+
+    <!-- Bottom bar -->
+    <div onclick="event.stopPropagation();" style="padding:0 16px 16px; background:linear-gradient(transparent, rgba(0,0,0,0.7));">
+      <div id="bdFsProgressWrap" style="height:24px; display:flex; align-items:center; cursor:pointer;" onclick="event.stopPropagation();" ontouchstart="bdFsSeekStart(event)" ontouchmove="bdFsSeekMove(event)" ontouchend="bdFsSeekEnd(event)">
+        <div style="width:100%; height:4px; background:rgba(255,255,255,0.2); border-radius:2px; position:relative;">
+          <div id="bdFsBuffered" style="position:absolute; top:0; left:0; height:100%; background:rgba(255,255,255,0.3); border-radius:2px;"></div>
+          <div id="bdFsProgress" style="position:absolute; top:0; left:0; height:100%; background:var(--pixiv-blue); border-radius:2px; width:0%;"></div>
+          <div id="bdFsScrubber" style="position:absolute; top:50%; width:14px; height:14px; border-radius:50%; background:#fff; transform:translate(-50%,-50%); box-shadow:0 0 4px rgba(0,0,0,0.5); left:0%;"></div>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-top:4px;">
+        <span id="bdFsTimeText" style="font-size:12px; color:rgba(255,255,255,0.85); font-variant-numeric:tabular-nums;">0:00 / 0:00</span>
+        <div style="display:flex; align-items:center; gap:4px;">
+          <div id="bdFsQualityChips" style="display:flex; gap:4px;"></div>
+          <div onclick="event.stopPropagation(); closeBdFullscreen();" style="padding:6px; cursor:pointer;">
+            <svg style="width:20px; height:20px; color:#fff;" viewBox="0 0 24 24"><path fill="currentColor" d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

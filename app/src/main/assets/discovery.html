@@ -1,0 +1,19 @@
+<div id="page-discovery" class="page" style="padding-top: 0px;">
+  <div class="detail-header">
+    <div class="back-btn" onclick="goBack()"><svg class="icon"><use xlink:href="#icon-back"></use></svg></div>
+    <div class="detail-header-title">Может понравиться</div>
+  </div>
+
+  <div class="text-sub" style="padding: 16px 16px 4px;">Рекомендации на основе ваших лайков</div>
+
+  <div class="filter-container" id="discoveryFilterBar" style="padding: 8px 16px;">
+    <div class="chip active" id="discChipAll" onclick="setDiscoveryFilter('all')">All</div>
+    <div class="chip" id="discChipSafe" onclick="setDiscoveryFilter('safe')">Safe</div>
+    <div class="chip r18" id="discChipR18" onclick="setDiscoveryFilter('r18')">R-18</div>
+  </div>
+
+  <div class="search-grid" id="discoveryGrid"></div>
+  <div style="padding: 16px;">
+    <button id="loadMoreDiscoveryBtn" class="btn-secondary" style="display: none;" onclick="loadMoreDiscovery()">Загрузить ещё</button>
+  </div>
+</div>

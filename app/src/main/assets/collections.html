@@ -1,0 +1,24 @@
+<div id="page-collections" class="page" style="padding-top: 0px;">
+  <div class="detail-header">
+    <div class="back-btn" onclick="collectionsBack()"><svg class="icon"><use xlink:href="#icon-back"></use></svg></div>
+    <div class="detail-header-title" id="collectionsTitle">Коллекции</div>
+  </div>
+
+  <!-- Список коллекций -->
+  <div id="collectionsListView">
+    <div id="collectionsList"></div>
+    <div id="collectionsEmpty" class="dlm-empty" style="display: none;">
+      <svg class="dlm-empty-icon"><use href="#icon-collection" xlink:href="#icon-collection"></use></svg>
+      Коллекций пока нет
+    </div>
+  </div>
+
+  <!-- Работы выбранной коллекции -->
+  <div id="collectionItemsView" style="display: none;">
+    <div class="search-grid" id="collectionItemsGrid"></div>
+    <div id="collectionItemsEmpty" class="dlm-empty" style="display: none;">
+      <svg class="dlm-empty-icon"><use href="#icon-image" xlink:href="#icon-image"></use></svg>
+      В коллекции пока пусто
+    </div>
+  </div>
+</div>

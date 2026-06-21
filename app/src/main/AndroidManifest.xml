@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:versionCode="1"
+    android:versionName="1.0"
+    package="com.pixivdl.application">
+
+    <uses-sdk
+        android:minSdkVersion="19"
+        android:targetSdkVersion="26"/>
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
+    <application
+        android:name="com.pixivdl.application.GlobalApplication"
+        android:theme="@style/AppTheme"
+        android:label="PixivDL"
+        android:icon="@drawable/ic_launcher"
+        android:allowBackup="true"
+        android:requestLegacyExternalStorage="true">
+
+        <activity
+            android:name="com.pixivdl.application.MainActivity"
+            android:launchMode="singleTask"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="text/plain"/>
+            </intent-filter>
+            <!-- Открытие веб-ссылок Pixiv во внешнем приложении.
+                 ВАЖНО: домен pixiv.net нам не принадлежит, поэтому App Links с
+                 android:autoVerify="true" НЕ используем — верификация Digital Asset
+                 Links провалится и на Android 12+ ссылка всё равно уйдёт в браузер.
+                 Без autoVerify система показывает диалог «Открыть с помощью», где
+                 пользователь выбирает наше приложение (и может назначить по умолчанию). -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="http"/>
+                <data android:scheme="https"/>
+                <data android:host="www.pixiv.net"/>
+                <data android:host="pixiv.net"/>
+                <data android:pathPrefix="/artworks/"/>
+                <data android:pathPrefix="/en/artworks/"/>
+                <data android:pathPrefix="/member_illust.php"/>
+                <data android:pathPrefix="/i/"/>
+            </intent-filter>
+
+            <!-- Собственные схемы — всегда открывают приложение напрямую,
+                 удобно для QR-кодов, кнопок и внутренних ссылок. -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="pixivdl"/>
+                <data android:scheme="pixiv"/>
+            </intent-filter>
+        </activity>
+        
+        <receiver android:name=".ArtWidgetProvider" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.pixivdl.application.ACTION_AUTO_UPDATE" />
+                <action android:name="com.pixivdl.application.ACTION_RELOAD_WIDGET" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_art_info" />
+        </receiver>
+
+        <receiver android:name=".ArtWidgetProvider2x2" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.pixivdl.application.ACTION_AUTO_UPDATE" />
+                <action android:name="com.pixivdl.application.ACTION_RELOAD_WIDGET" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_art_2x2_info" />
+        </receiver>
+
+        <!-- ✅ ДОБАВЛЕНО: CrashActivity -->
+        <activity
+            android:name="com.pixivdl.application.GlobalApplication$CrashActivity"
+            android:exported="false"
+            android:label="App Crash"
+            android:theme="@android:style/Theme.DeviceDefault"/>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.pixivdl.application.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"/>
+        </provider>
+
+        <!-- Фоновая проверка обновлений: receiver + автозапуск после перезагрузки -->
+        <receiver
+            android:name=".UpdateCheckReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="com.pixivdl.application.ACTION_CHECK_UPDATE"/>
+            </intent-filter>
+        </receiver>
+
+    </application>
+</manifest>

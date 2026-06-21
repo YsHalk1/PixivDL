@@ -1,0 +1,43 @@
+<div id="page-author" class="page" style="padding-top: 0; margin-top: calc(-1 * var(--nav-top-offset, calc(68px + var(--sat)))); background: var(--bg);">
+
+  <!-- Плавающая кнопка назад поверх баннера (режим просмотра чужого профиля) -->
+  <div id="authorFloatBack" class="back-btn" onclick="goBack()" style="position: absolute; top: calc(16px + var(--sat)); left: 16px; z-index: 10; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); color: #fff; border: none;">
+    <svg class="icon"><use xlink:href="#icon-back"></use></svg>
+  </div>
+
+  <!-- Единый фиксированный хедер (режим "Мои работы" / "Нравится") -->
+  <div id="authorSimpleHeader" class="detail-header" style="display: none;">
+    <div class="back-btn" onclick="goBack()"><svg class="icon"><use xlink:href="#icon-back"></use></svg></div>
+    <div class="detail-header-title" id="authorSimpleTitle">Мои работы</div>
+  </div>
+
+  <div class="author-profile-header" id="authorProfileHeader">
+    <div class="author-banner">
+      <img id="authorBannerImg" class="author-banner-img" src="">
+      <div class="author-banner-gradient"></div>
+    </div>
+
+    <div class="author-info-container">
+      <div class="author-avatar-wrapper">
+        <img id="authorProfileAvatar" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=">
+      </div>
+
+      <div class="author-name" id="authorTitle">Загрузка...</div>
+
+      <div class="author-id-chip" onclick="copyAuthorId()">
+        <span id="authorIdDisplay">ID: ---</span>
+        <svg class="icon-xs" style="opacity: 0.7;"><use href="#icon-copy"></use></svg>
+      </div>
+
+      <button id="authorFollowBtn" class="author-follow-btn" style="display: none;">Подписаться</button>
+    </div>
+  </div>
+
+  <div class="author-section-head">
+    <span class="author-accent"></span>
+    <span class="author-tab-name" id="authorTabName">Работы автора</span>
+  </div>
+
+  <div class="search-grid" id="authorGrid" style="margin-top: 0;"></div>
+  <div style="padding: 16px;"><button id="loadMoreAuthorBtn" class="btn-secondary" style="display: none;" onclick="loadMoreAuthor()">Загрузить ещё</button></div>
+</div>

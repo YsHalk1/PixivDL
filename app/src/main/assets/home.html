@@ -1,0 +1,96 @@
+<div id="page-home" class="page active">
+
+  <!-- HERO: топовая работа из тренда -->
+  <div class="home-hero" id="homeHero" style="display:none;" onclick="if(window.homeHeroId) openDetails(window.homeHeroId)">
+    <img class="search-img" id="homeHeroImg" alt="">
+    <div class="home-hero-cap">
+      <span class="title" id="homeHeroTitle"></span>
+    </div>
+  </div>
+
+  <!-- В тренде (highlights, без отдельного раздела) -->
+  <div class="home-section" id="secTrending" style="display:none;">
+    <div class="home-sec-head">
+      <span class="bar"></span>
+      <span class="txt">В тренде</span>
+    </div>
+    <div class="home-strip" id="homeTrendingStrip"></div>
+  </div>
+
+  <!-- Может понравиться -> раздел discovery -->
+  <div class="home-section" id="secSuggested" style="display:none;">
+    <div class="home-sec-head clickable" onclick="switchTab('discovery')">
+      <span class="bar"></span>
+      <span class="txt">Может понравиться</span>
+      <span class="all">Все ›</span>
+    </div>
+    <div class="home-strip" id="homeSuggestedStrip"></div>
+  </div>
+
+  <!-- Лайки -> закладки -->
+  <div class="home-section" id="secBookmarks" style="display:none;">
+    <div class="home-sec-head clickable" onclick="viewBookmarks()">
+      <span class="bar"></span>
+      <span class="txt">Лайки</span>
+      <span class="all">Все ›</span>
+    </div>
+    <div class="home-strip" id="homeBookmarksStrip"></div>
+  </div>
+
+  <!-- Коллекции -> раздел коллекций -->
+  <div class="home-section" id="secCollections" style="display:none;">
+    <div class="home-sec-head clickable" onclick="openCollectionsTab()">
+      <span class="bar"></span>
+      <span class="txt">Коллекции</span>
+      <span class="all">Все ›</span>
+    </div>
+    <div class="home-strip strip-col" id="homeCollectionsStrip"></div>
+  </div>
+
+  <!-- РЕКОМЕНДАЦИИ (основная лента внизу) -->
+  <div class="disabled-section" id="recomCard">
+    <div class="search-bar-container" style="padding-top:12px;">
+
+      <div class="filter-container" style="display: flex; align-items: center; width: 100%; gap: 8px;">
+        <div class="chip" id="recomAiChip" onclick="toggleRecomAi()" style="margin: 0; flex-shrink: 0;">Скрыть ИИ</div>
+
+        <div id="activeRecomFilters" style="flex: 1; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; align-items: center;"></div>
+
+        <div class="action-icon" id="openRecomFilterBtn" onclick="toggleRecomFiltersPanel()" style="flex-shrink: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 50%; width: 32px; height: 32px;">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/></svg>
+        </div>
+      </div>
+
+      <div id="expandableRecomFiltersPanel" class="expandable-panel">
+        <div class="expandable-panel-inner">
+          <div class="exclude-block" style="border-top: none; padding-top: 0; margin-top: 0;">
+            <div class="exclude-head">
+              <svg class="icon-xs"><use href="#icon-close" xlink:href="#icon-close"></use></svg>
+              Исключить теги <span class="exclude-hint">— добавляйте по одному</span>
+            </div>
+            <div class="exclude-input-row">
+              <input type="text" id="excludeTagInputRecom" class="exclude-input" placeholder="Например: AI, yaoi…"
+                oninput="triggerAutocomplete('excludeTagInputRecom')"
+                onfocus="triggerAutocomplete('excludeTagInputRecom')"
+                onblur="setTimeout(() => { let el = document.getElementById('excludeAutocompleteSectionRecom'); if(el) el.style.display = 'none'; }, 200)"
+                onkeypress="if(event.key === 'Enter') applyExcludeTags('excludeTagInputRecom')">
+              <button class="exclude-add-btn" onclick="applyExcludeTags('excludeTagInputRecom')" aria-label="Добавить">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </button>
+            </div>
+            <div id="excludeAutocompleteSectionRecom" class="exclude-autocomplete"></div>
+            <div id="excludeTagsHistoryListRecom" class="exclude-chips"></div>
+            <div class="exclude-apply-row">
+              <button class="exclude-apply-btn" onclick="applyExcludeTags('excludeTagInputRecom'); toggleRecomFiltersPanel(); loadRecommendations(true);">Применить</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="section-title" id="recomStatus">Рекомендации</div>
+    <div class="search-grid" id="recomGrid"></div>
+    <div style="padding: 16px;"><button id="loadMoreRecomBtn" class="btn-secondary" style="display: none;" onclick="loadRecommendations(false)">Загрузить ещё</button></div>
+  </div>
+</div>

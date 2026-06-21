@@ -1,0 +1,60 @@
+<div id="pull-to-refresh" style="position: fixed; top: calc(56px + var(--sat)); left: 50%; transform: translate(-50%, -150%); z-index: 105; background: var(--surface); border-radius: 50%; padding: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); opacity: 0; pointer-events: none;">
+  <svg class="icon" style="color: var(--pixiv-blue);"><use href="#icon-refresh" xlink:href="#icon-refresh"></use></svg>
+</div>
+
+<div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
+<div id="sidebar" class="sidebar">
+  <div class="sidebar-header" id="sidebarHeader">
+    <img id="sidebarHeaderBgImg" class="sidebar-header-bg-img" src="" alt="">
+    <div class="sidebar-header-gradient"></div>
+    <div class="sidebar-header-content">
+      <div class="sidebar-avatar-container">
+        <img id="sidebarAvatarImg" class="sidebar-avatar-img" src="" alt="Avatar" onerror="this.style.display='none'; document.getElementById('sidebarAvatarPlaceholder').style.display='flex'; document.getElementById('sidebarHeaderBgImg').style.display='none';">
+        <div id="sidebarAvatarPlaceholder" class="sidebar-avatar-placeholder"><svg class="icon"><use href="#icon-user" xlink:href="#icon-user"></use></svg></div>
+      </div>
+      <div class="sidebar-user-info">
+        <div id="sidebarName" class="sidebar-name font-bold">Гость</div>
+        <div class="sidebar-id-chip" onclick="copyUserId()">
+          <span id="sidebarId">ID: ---</span>
+          <svg class="icon-xs" style="margin-left: 4px; opacity: 0.7;"><use href="#icon-copy"></use></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="sidebar-menu">
+    <div class="sidebar-label">Навигация</div>
+    <div class="sidebar-item" onclick="switchTab('home'); toggleSidebar();"><svg class="icon sidebar-item-ico"><use href="#icon-home" xlink:href="#icon-home"></use></svg><span class="sidebar-item-text">Главная</span></div>
+    <div class="sidebar-item" onclick="switchTab('search'); toggleSidebar();"><svg class="icon sidebar-item-ico"><use href="#icon-search" xlink:href="#icon-search"></use></svg><span class="sidebar-item-text">Поиск</span></div>
+    <div class="sidebar-item" onclick="switchTab('browse'); toggleSidebar();"><svg class="icon sidebar-item-ico"><use href="#icon-explore" xlink:href="#icon-explore"></use></svg><span class="sidebar-item-text">Просмотр</span><span class="badge-beta">BETA</span></div>
+    <div class="sidebar-item" onclick="switchTab('down'); toggleSidebar();"><svg class="icon sidebar-item-ico"><use href="#icon-settings" xlink:href="#icon-settings"></use></svg><span class="sidebar-item-text">Аккаунт</span></div>
+
+    <div class="sidebar-label">Моё</div>
+    <div id="sidebarMyIllusts" class="sidebar-item disabled-section" onclick="viewOwnIllusts()"><svg class="icon sidebar-item-ico"><use href="#icon-image" xlink:href="#icon-image"></use></svg><span class="sidebar-item-text">Мои работы</span></div>
+    <div id="sidebarMyBookmarks" class="sidebar-item disabled-section" onclick="viewBookmarks()"><svg class="icon sidebar-item-ico"><use href="#icon-heart" xlink:href="#icon-heart"></use></svg><span class="sidebar-item-text">Нравится</span></div>
+    <div id="sidebarFollowing" class="sidebar-item disabled-section" onclick="openFollowing()"><svg class="icon sidebar-item-ico"><use href="#icon-users" xlink:href="#icon-users"></use></svg><span class="sidebar-item-text">Подписки</span></div>
+    <div class="sidebar-item" onclick="switchTab('history'); toggleSidebar();"><svg class="icon sidebar-item-ico"><use href="#icon-eye" xlink:href="#icon-eye"></use></svg><span class="sidebar-item-text">История</span></div>
+    <div class="sidebar-item" onclick="openCollectionsTab(); toggleSidebar();"><svg class="icon sidebar-item-ico"><use href="#icon-collection" xlink:href="#icon-collection"></use></svg><span class="sidebar-item-text">Коллекции</span></div>
+
+    <div class="sidebar-label">Открытия</div>
+    <div id="sidebarDiscovery" class="sidebar-item disabled-section" onclick="switchTab('discovery'); toggleSidebar();"><svg class="icon sidebar-item-ico"><use href="#icon-explore" xlink:href="#icon-explore"></use></svg><span class="sidebar-item-text">Может понравиться</span></div>
+    <div class="sidebar-item" onclick="switchTab('smartcache'); toggleSidebar();"><svg class="icon sidebar-item-ico"><use href="#icon-cloud-dl" xlink:href="#icon-cloud-dl"></use></svg><span class="sidebar-item-text">Оффлайн подборка</span></div>
+  </div>
+</div>
+
+<div class="top-bar">
+  <div class="top-bar-left">
+    <div class="top-bar-icon" onclick="toggleSidebar()"><svg class="icon"><use href="#icon-menu" xlink:href="#icon-menu"></use></svg></div>
+  </div>
+  <div class="top-bar-logo" onclick="manualUpdateCheck()" style="position: absolute; left: 50%; transform: translateX(-50%); cursor: pointer; padding: 10px 20px; z-index: 10;">pixiv <span>DL</span></div>
+  <div class="top-bar-right">
+    <div class="top-bar-icon" onclick="switchTab('manager')"><svg class="icon"><use href="#icon-folder" xlink:href="#icon-folder"></use></svg></div>
+    <div class="top-bar-icon" onclick="switchTab('search')"><svg class="icon"><use href="#icon-search" xlink:href="#icon-search"></use></svg></div>
+  </div>
+</div>
+<div class="tabs" id="mainTabs">
+  <div class="tab-slider" id="tabSlider"></div> <div class="tab active" id="tab-home" onclick="switchTab('home')">Главная</div>
+  <div class="tab" id="tab-search" onclick="switchTab('search')">Поиск</div>
+  <div class="tab" id="tab-browse" onclick="switchTab('browse')">Просмотр<span class="badge-beta">BETA</span></div>
+  <div class="tab" id="tab-down" onclick="switchTab('down')">Аккаунт</div>
+</div>
+

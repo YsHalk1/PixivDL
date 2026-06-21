@@ -1,0 +1,16 @@
+<div id="page-history" class="page" style="padding-top: 0px;">
+  <div class="detail-header">
+    <div class="back-btn" onclick="goBack()"><svg class="icon"><use xlink:href="#icon-back"></use></svg></div>
+    <div class="detail-header-title">История</div>
+    <div class="dh-action" id="historyClearBtn" onclick="clearHistory()" aria-label="Очистить историю">
+      <svg class="icon"><use xlink:href="#icon-trash"></use></svg>
+    </div>
+  </div>
+
+  <div class="search-grid" id="historyGrid"></div>
+
+  <div id="historyEmpty" class="dlm-empty" style="display: none;">
+    <svg class="dlm-empty-icon"><use href="#icon-eye" xlink:href="#icon-eye"></use></svg>
+    История просмотров пуста
+  </div>
+</div>

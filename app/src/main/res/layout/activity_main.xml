@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="#0e1014"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <WebView
+        android:id="@+id/uiWebView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+    <WebView
+        android:id="@+id/authWebView"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+    <LinearLayout
+        android:id="@+id/authLoader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="#0e1014"
+        android:visibility="gone">
+        <TextView
+            android:id="@+id/authLoaderLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="pixiv DL"
+            android:textColor="#0096FA"
+            android:textStyle="bold"
+            android:textSize="30sp"
+            android:letterSpacing="-0.03"/>
+        <ProgressBar
+            android:id="@+id/authSpinner"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="20dp"
+            android:indeterminateTint="#0096FA"/>
+    </LinearLayout>
+</RelativeLayout>
+

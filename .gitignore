@@ -1,0 +1,55 @@
+# ──────────────────────────────────────────────
+#  Gradle / Build artifacts
+# ──────────────────────────────────────────────
+.gradle/
+build/
+/app/build/
+*.apk
+*.aab
+*.ap_
+*.dex
+captures/
+
+# ──────────────────────────────────────────────
+#  Local configuration (machine-specific, secrets)
+# ──────────────────────────────────────────────
+local.properties
+*.keystore
+*.jks
+keystore.properties
+
+# ──────────────────────────────────────────────
+#  Bundled toolchain (not source code)
+# ──────────────────────────────────────────────
+/jdk/
+jdk.zip
+
+# ──────────────────────────────────────────────
+#  IDE
+# ──────────────────────────────────────────────
+.idea/
+*.iml
+.vscode/
+
+# ──────────────────────────────────────────────
+#  OS junk
+# ──────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+nul
+
+# ──────────────────────────────────────────────
+#  Local-only folders / generated dumps
+# ──────────────────────────────────────────────
+/backups/
+/previews/
+app/src/main/java/com/pixivdl/application/results.txt
+app/src/main/java/com/pixivdl/application/*-cuserstecno*.txt
+
+# ──────────────────────────────────────────────
+#  Not part of the Android repo
+# ──────────────────────────────────────────────
+/desktop/
+/index.html
+/build.bat
+/ServerApply.bat

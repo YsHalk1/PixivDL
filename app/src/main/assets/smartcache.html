@@ -1,0 +1,83 @@
+<div id="page-smartcache" class="page" style="height: 100vh; overflow: hidden; background: var(--bg); position: fixed; top: 0; left: 0; right: 0; z-index: 150;">
+  <div id="scHeader" class="detail-header">
+    <div class="back-btn" onclick="goBack()"><svg class="icon"><use xlink:href="#icon-back"></use></svg></div>
+    <div class="detail-header-title">Оффлайн подборка</div>
+  </div>
+
+  <div id="scSetupScreen">
+    <div class="sc-scroll">
+      <!-- Герой -->
+      <div class="sc-hero">
+        <div class="sc-hero-icon"><svg class="icon"><use xlink:href="#icon-cloud-dl"></use></svg></div>
+        <div class="sc-hero-title">Оффлайн-подборка</div>
+        <div class="sc-hero-sub">Соберём арты под ваши вкусы и сохраним для просмотра без сети — подборка будет ждать в менеджере загрузок.</div>
+      </div>
+
+      <!-- Количество -->
+      <div class="sc-section-head">
+        <span class="sc-accent"></span>
+        <span class="sc-section-title">Количество артов</span>
+      </div>
+      <div class="sc-card">
+        <div class="sc-count-grid">
+          <div class="sc-count active" id="scCount_50" onclick="setScCount(50)">50</div>
+          <div class="sc-count" id="scCount_100" onclick="setScCount(100)">100</div>
+          <div class="sc-count" id="scCount_300" onclick="setScCount(300)">300</div>
+          <div class="sc-count" id="scCountBtn_custom" onclick="toggleCustomScCount()">Своё</div>
+        </div>
+        <input type="number" id="scCount_custom" class="sc-custom-input" style="display: none;" placeholder="Введите количество…" oninput="setScCount('custom')">
+      </div>
+
+      <!-- Качество -->
+      <div class="sc-section-head">
+        <span class="sc-accent"></span>
+        <span class="sc-section-title">Качество</span>
+      </div>
+      <div class="sc-card">
+        <div class="sc-quality" id="scQuality_medium" onclick="setScQuality('medium')">
+          <div class="sc-quality-text">
+            <div class="sc-quality-name">Низкое</div>
+            <div class="sc-quality-desc">Экономит место и трафик</div>
+          </div>
+          <div class="sc-radio"></div>
+        </div>
+        <div class="sc-quality active" id="scQuality_large" onclick="setScQuality('large')">
+          <div class="sc-quality-text">
+            <div class="sc-quality-name">Среднее <span class="sc-tag">рекомендуем</span></div>
+            <div class="sc-quality-desc">Баланс качества и размера</div>
+          </div>
+          <div class="sc-radio"></div>
+        </div>
+        <div class="sc-quality" id="scQuality_original" onclick="setScQuality('original')">
+          <div class="sc-quality-text">
+            <div class="sc-quality-name">Оригинал</div>
+            <div class="sc-quality-desc">Максимальное качество, больше места</div>
+          </div>
+          <div class="sc-radio"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc-cta-bar">
+      <button class="btn-main sc-launch" onclick="startSmartCacheUI()">Запустить сбор</button>
+    </div>
+  </div>
+
+  <div id="scActiveScreen" style="display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); z-index: 50;">
+    <div id="scFlyingContainer" style="position: absolute; width: 100%; height: 100%; overflow: hidden; z-index: 51;"></div>
+
+    <div class="sc-active-overlay">
+      <div class="sc-active-icon"><svg class="icon"><use xlink:href="#icon-cloud-dl"></use></svg></div>
+      <div class="sc-active-label">Собираем подборку</div>
+      <div id="scProgressText" class="sc-active-count">0 / 100</div>
+
+      <div class="sc-active-track">
+        <div id="scProgressBar" class="sc-active-fill"></div>
+      </div>
+
+      <div id="scStatusText" class="sc-active-hint">Можно вернуться в ленту жестом «назад» — сбор продолжится в фоне</div>
+
+      <button class="sc-active-stop" onclick="stopSmartCacheUI()">Прервать</button>
+    </div>
+  </div>
+</div>

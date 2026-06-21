@@ -1,0 +1,33 @@
+<style>
+  /* --- Карточки списка подписок (генерируются JS) --- */
+  #followingGrid > div {
+    transition: transform 0.1s ease, background 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  #followingGrid > div:active {
+    transform: scale(0.98);
+    background: var(--bg) !important;
+  }
+  #followingGrid img,
+  #followingGrid .btn-outline {
+    border-radius: 5px !important;
+  }
+</style>
+
+<div id="page-following" class="page" style="padding-top: 0;">
+
+  <div class="detail-header">
+    <div class="back-btn" onclick="goBack()"><svg class="icon"><use xlink:href="#icon-back"></use></svg></div>
+    <div class="detail-header-title">Мои подписки</div>
+  </div>
+
+  <div style="padding: 16px; padding-bottom: 32px;">
+
+    <div id="followingGrid"></div>
+
+    <button id="loadMoreFollowingBtn" class="btn-secondary" style="display: none; width: 100%; margin-top: 16px; border-radius: 5px !important; font-weight: bold; padding: 14px;" onclick="loadMoreFollowing()">
+      Загрузить ещё
+    </button>
+
+  </div>
+</div>

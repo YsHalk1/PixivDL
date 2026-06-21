@@ -1,0 +1,73 @@
+<div id="page-detail" class="page" style="padding-top: 0;">
+  <div class="detail-header">
+    <div class="back-btn" onclick="goBack()"><svg class="icon"><use xlink:href="#icon-back"></use></svg></div>
+  </div>
+  <div class="det-image-container" id="detImageContainer"></div>
+  <div class="det-action-bar">
+    <div class="inline-progress-bg" id="detProgressBg"><div class="inline-progress-fill" id="fillDetInline"></div></div>
+    <div class="det-action-left">
+      <div class="det-like-btn" id="detLikeBtn" onclick="toggleBookmark()"><svg class="icon" id="detLikeIcon"><use xlink:href="#icon-heart-outline"></use></svg></div>
+      <div class="det-like-btn" onclick="startDownload(currentIllustId, 'det', 'dl')"><svg class="icon"><use xlink:href="#icon-dl"></use></svg></div>
+      <div class="det-like-btn" id="detCollectionBtn" onclick="openCollectionSheet()"><svg class="icon" id="detCollectionIcon"><use xlink:href="#icon-collection"></use></svg></div>
+      <div class="det-like-btn" id="detShareBtn" onclick="openShareSheet()"><svg class="icon"><use xlink:href="#icon-telegram"></use></svg></div>
+    </div>
+  </div>
+  <div class="font-bold" id="detTitle" style="font-size: 18px; padding: 0 16px; margin-top: 8px;">Название...</div>
+  <div class="det-stats" style="margin-top: 8px;">
+    <span><svg class="icon-xs"><use xlink:href="#icon-eye"></use></svg> <span id="detViews">0</span></span>
+    <span><svg class="icon-xs"><use xlink:href="#icon-heart"></use></svg> <span id="detBookmarks">0</span></span>
+    <span id="detDate"></span>
+    <span id="detAiTag" style="display:none;" class="badge badge-ai">AI-generated</span>
+  </div>
+  <div class="tags-container" id="detTags" style="padding: 12px 16px 4px 16px;"></div>
+  <div class="author-card" id="detAuthorCard">
+    <img src="" id="detAuthorAvatar" class="author-card-avatar" onclick="document.getElementById('detAuthorBtn').click()">
+    <div class="author-card-info" onclick="document.getElementById('detAuthorBtn').click()">
+      <div class="author-card-name" id="detAuthorName">Автор</div>
+    </div>
+
+    <div class="follow-btn" id="detFollowBtn" style="margin-right: 8px;">Подписаться</div>
+
+    <div class="author-card-btn" id="detAuthorBtn">Профиль</div>
+  </div>
+  <div class="section-title" style="margin-top:0;">Другие работы автора</div>
+  <div class="mini-grid-container" id="detMiniGrid"></div>
+
+  <!-- Переключатель: Похожие работы / Комментарии (стиль разделов, компактный слева) -->
+  <div class="det-tabs" id="detTabSwitch">
+    <div class="det-tab-slider" id="detTabSlider"></div>
+    <div class="det-tab active" id="detTab_related" onclick="setDetailTab('related')">Похожие</div>
+    <div class="det-tab" id="detTab_comments" onclick="setDetailTab('comments')">Комментарии</div>
+  </div>
+
+  <!-- БЛОК: ПОХОЖИЕ РАБОТЫ -->
+  <div id="detRelatedSection">
+    <div class="search-grid" id="detRelatedGrid" style="padding-bottom: 16px; margin-top: 12px;"></div>
+    <div style="padding: 0 16px 32px 16px;">
+      <button id="loadMoreRelatedBtn" class="btn-secondary" style="display: none;" onclick="loadMoreRelated()">Загрузить ещё</button>
+    </div>
+  </div>
+
+  <!-- БЛОК: КОММЕНТАРИИ -->
+  <div id="detCommentsSection" style="display: none;">
+    <div class="comment-compose">
+      <textarea id="detCommentInput" rows="1" placeholder="Добавить комментарий..."
+        oninput="autoGrowComment(this)" class="comment-compose-input"></textarea>
+      <button id="detCommentSendBtn" class="comment-send-btn" onclick="postComment()" aria-label="Отправить">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+      </button>
+    </div>
+    <div id="detCommentsContainer" style="padding: 4px 16px 16px 16px;"></div>
+    <div style="padding: 0 16px 32px 16px;">
+      <button id="loadMoreCommentsBtn" class="btn-secondary" style="display: none;" onclick="loadMoreComments()">Загрузить ещё</button>
+    </div>
+  </div>
+</div> <!-- Это закрывающий div от <div id="page-detail" ...> -->
+<div id="imageViewer" class="image-viewer" onclick="closeImageViewer()">
+  <div class="viewer-header">
+    <div class="viewer-close"><svg class="icon"><use href="#icon-close"></use></svg></div>
+  </div>
+  <div class="viewer-content">
+    <img id="viewerImg" src="" onclick="event.stopPropagation()">
+  </div>
+</div>
